@@ -2,7 +2,6 @@ package utils.datastructures;
 
 import java.util.Iterator;
 import java.util.Stack;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;

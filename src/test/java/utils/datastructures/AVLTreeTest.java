@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AVLTreeTest {
 
     private boolean checkOrderRestrain(AVLTree<Int> avlTree) {
-        boolean ret = true;
         int last = Integer.MIN_VALUE;
         for (Int i : avlTree) {
             if (i.d < last) {
@@ -94,8 +93,14 @@ class AVLTreeTest {
         }
     }
     @Test
-    void basicFindTest() {
-
+    void basicFindTest() throws InterruptedException {
+        AVLTree<Int> avlTree = new AVLTree<>();
+        for (int i = 0; i < 10; i++) {
+            avlTree.insert(new Int(i));
+        }
+        for (int i = 0; i < 10; i++) {
+            assertEquals(new Int(i), avlTree.find(i));
+        }
     }
 
     private static class Int implements AVLTree.AVLDataElement {
