@@ -9,7 +9,6 @@ import utils.datastructures.AVLTree;
 public class Layout {
     private final IDGenerator idGenerator;
     private final ViewHandler viewHandler;
-
     private final AVLTree<LayoutComponent> components;
 
 
