@@ -1,6 +1,5 @@
 package server;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import utils.datastructures.Command;
@@ -90,13 +89,31 @@ public class Client implements Runnable{
     }
 
     private void handleRequest(JsonObject json) {
-        System.out.println(json.toString());
+        System.out.println("[Client " + clientId + "] " + json.toString());
+        try {
+            JsonObject header = json.get("header").getAsJsonObject();
+            JsonObject body = json.get("body").getAsJsonObject();
+            switch (header.get("messageType").getAsString()) {
+                case "Request" -> queue.add(new Command(1000,body));
+                case "Set" -> queue.add(new Command(500,body));
+            }
+        } catch (NullPointerException e) {
+            System.err.println("[Client " + clientId + "] " + "Json Not defined by protocol");
+        }
     }
     private JsonObject welcomeMessage() {
         JsonObject json = new JsonObject();
 
-        json.addProperty("clientID", clientId);
-        json.addProperty("message", "Welcome");
+        json.addProperty("store", "control");
+
+        JsonObject action = new JsonObject();
+        action.addProperty("type", "initialMessage");
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("clientID", clientId);
+
+        action.add("payload",payload);
+        json.add("action", action);
 
         return json;
     }
