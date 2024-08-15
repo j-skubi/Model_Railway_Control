@@ -25,7 +25,7 @@ class AVLTreeTest {
     void setUp() {
     }
     @Test
-    void basicInsertTest() throws InterruptedException {
+    void basicInsertTest() {
         AVLTree<Int> avlTree = new AVLTree<>();
         for (int i = 0; i < 10; i++) {
             avlTree.insert(new Int(i));
@@ -37,7 +37,7 @@ class AVLTreeTest {
         }
     }
     @Test
-    void randomizedInsertTest() throws InterruptedException {
+    void randomizedInsertTest() {
         AVLTree<Int> avlTree = new AVLTree<>();
         Random random = new Random();
         for (int i = 0; i < 10000; i++) {
@@ -53,11 +53,7 @@ class AVLTreeTest {
             Thread t = new Thread(() -> {
                 Random random = new Random();
                 for (int r = 0; r < 100; r++) {
-                    try {
-                        avlTree.insert(new Int(random.nextInt()));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    avlTree.insert(new Int(random.nextInt()));
                 }
             });
             threads.add(t);
@@ -76,11 +72,7 @@ class AVLTreeTest {
         for (int i = 0; i < 1000; i++) {
             Thread t = new Thread(() -> {
                 if (rd.nextInt(0,10) > 3) {
-                    try {
-                        avlTree.insert(new Int(rd.nextInt()));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    avlTree.insert(new Int(rd.nextInt()));
                 } else {
                     assertTrue(checkOrderRestrain(avlTree));
                 }
@@ -93,7 +85,7 @@ class AVLTreeTest {
         }
     }
     @Test
-    void basicFindTest() throws InterruptedException {
+    void basicFindTest() {
         AVLTree<Int> avlTree = new AVLTree<>();
         for (int i = 0; i < 10; i++) {
             avlTree.insert(new Int(i));

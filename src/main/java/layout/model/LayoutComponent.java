@@ -78,4 +78,11 @@ public abstract class LayoutComponent implements AVLDataElement {
         addressMapping.get(addressSpace).get(state).add(mapping);
     }
 
+
+    public static LayoutComponent fromJson(JsonObject json) {
+        return switch (json.get("type").getAsString()) {
+            case "TURNOUT" -> new Turnout(json);
+            default -> null;
+        };
+    }
 }

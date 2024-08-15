@@ -8,11 +8,10 @@ import java.util.List;
 
 public class Turnout extends LayoutComponent {
     private final List<String> legalStates;
-    private boolean isLeft;
+    private String state;
     public Turnout(int id) {
         super(id, "TURNOUT");
         this.legalStates = new ArrayList<>();
-        isLeft = false;
     }
     public Turnout(JsonObject json) {
         super(json);
@@ -28,6 +27,9 @@ public class Turnout extends LayoutComponent {
         json.add("LegalStates", legalStatesArray);
 
         return json;
+    }
+    public String getState() {
+        return state;
     }
 
 

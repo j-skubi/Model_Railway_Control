@@ -10,6 +10,6 @@ public class Event {
         return eventType;
     }
     public enum EventType {
-
+        StateChange
     }
 }

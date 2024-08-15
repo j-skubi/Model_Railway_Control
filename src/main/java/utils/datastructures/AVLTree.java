@@ -14,7 +14,7 @@ public class AVLTree <T extends AVLTree.AVLDataElement> implements Iterable<T> {
         lock = new ReentrantReadWriteLock();
     }
     //-------------API-Functions-----------------------------
-    public void insert (T data) throws InterruptedException {
+    public void insert (T data) {
         lock.writeLock().lock();
         try {
             root = insert(root, data);
@@ -22,7 +22,7 @@ public class AVLTree <T extends AVLTree.AVLDataElement> implements Iterable<T> {
             lock.writeLock().unlock();
         }
     }
-    public T find (int key) throws InterruptedException {
+    public T find (int key) {
         lock.readLock().lock();
         Node temp;
         try {

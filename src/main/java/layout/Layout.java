@@ -1,9 +1,13 @@
 package layout;
 
+import com.google.gson.JsonObject;
+import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
 import layout.views.ViewHandler;
 import utils.IDGenerator;
 import utils.datastructures.AVLTree;
+import utils.datastructures.Command;
+import utils.datastructures.PriorityBlockingQueueWrapper;
 
 
 public class Layout {
@@ -11,10 +15,20 @@ public class Layout {
     private final ViewHandler viewHandler;
     private final AVLTree<LayoutComponent> components;
 
-    public Layout() {
+    public Layout(JsonObject json) throws CorruptedSaveFile {
         idGenerator = new IDGenerator(Integer.MIN_VALUE);
-        viewHandler = new ViewHandler();
         components = new AVLTree<>();
+
+        json.get("components").getAsJsonArray().forEach(elem -> {
+            components.insert(LayoutComponent.fromJson(elem.getAsJsonObject()));
+        });
+
+
+        viewHandler = new ViewHandler(json.get("views").getAsJsonObject(), components);
+    }
+
+    public ViewHandler.RequestViewClass requestView(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, int clientId) {
+        return viewHandler.requestViewClass(command,queue,clientId);
     }
 
 }
