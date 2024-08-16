@@ -38,14 +38,16 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement {
 
         json.addProperty("viewID", viewID);
         json.addProperty("modelID", model.calculateKey());
+        json.addProperty("name",name);
 
         return json;
     }
-    public JsonObject basicClientInfo() {
+    public JsonObject toClient() {
         JsonObject json = new JsonObject();
 
         json.addProperty("viewID", viewID);
         json.addProperty("name", name);
+        json.add("addressMapping", model.getAddressMappingAsJsonArray());
 
         return json;
     }
@@ -53,7 +55,7 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement {
     public static ViewComponent fromJSON(ComponentView parent, JsonObject json, AVLTree<LayoutComponent> model) throws CorruptedSaveFile {
 
         return switch (json.get("type").getAsString()) {
-            case "TURNOUT" -> new TurnoutView(parent,json,model.find(json.get("modelID").getAsInt()));
+            case "TURNOUT-VIEW" -> new TurnoutView(parent,json,model.find(json.get("modelID").getAsInt()));
             default -> throw new CorruptedSaveFile("No corresponding view for type " + json.get("type").getAsString() + "!");
         };
     }

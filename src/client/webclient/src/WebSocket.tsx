@@ -1,4 +1,4 @@
-import { controlStore } from "./Stores/ControlStore";
+import controlStore from "./Stores/ControlStore";
 
 let ws: WebSocket | undefined = undefined
 

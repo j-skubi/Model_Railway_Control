@@ -18,4 +18,5 @@ function controlServerMessageReducer (controlState: ControlState = initialState,
     }
 }
 
-export const controlStore = configureStore({reducer: controlServerMessageReducer});
+const controlStore = configureStore({reducer: controlServerMessageReducer});
+export default controlStore;

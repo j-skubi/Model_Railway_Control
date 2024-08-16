@@ -49,6 +49,12 @@ public abstract class LayoutComponent implements AVLDataElement {
         json.addProperty("id", id);
         json.addProperty("type", type);
 
+
+        json.add("AddressSpaceMappings", getAddressMappingAsJsonArray());
+
+        return json;
+    }
+    public JsonArray getAddressMappingAsJsonArray() {
         JsonArray addresses = new JsonArray();
         addressMapping.forEach((key, value) -> {
             JsonObject addressSpace = new JsonObject();
@@ -64,9 +70,7 @@ public abstract class LayoutComponent implements AVLDataElement {
             addressSpace.add("StateMappings", states);
             addresses.add(addressSpace);
         });
-        json.add("AddressSpaceMappings", addresses);
-
-        return json;
+        return addresses;
     }
     public void addAddressMapping(String addressSpace, String state, JsonObject mapping) {
         if (!addressMapping.containsKey(addressSpace)) {
@@ -77,7 +81,6 @@ public abstract class LayoutComponent implements AVLDataElement {
         }
         addressMapping.get(addressSpace).get(state).add(mapping);
     }
-
 
     public static LayoutComponent fromJson(JsonObject json) {
         return switch (json.get("type").getAsString()) {

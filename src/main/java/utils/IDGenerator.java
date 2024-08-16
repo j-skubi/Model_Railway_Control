@@ -8,4 +8,5 @@ public class IDGenerator {
     public int generateID() {
         return ID++;
     }
+    public int save() { return this.ID;}
 }

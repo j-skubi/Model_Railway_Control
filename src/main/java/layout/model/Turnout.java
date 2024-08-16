@@ -31,6 +31,10 @@ public class Turnout extends LayoutComponent {
     public String getState() {
         return state;
     }
-
+    public JsonArray getLegalStatesAsJsonArray() {
+        JsonArray json = new JsonArray();
+        legalStates.forEach(json::add);
+        return json;
+    }
 
 }

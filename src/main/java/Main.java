@@ -89,6 +89,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             Server server = new Server(50745, JsonParser.parseString(testSave).getAsJsonObject());
+            server.run();
         } catch (CorruptedSaveFile e) {
             throw new RuntimeException(e);
         }

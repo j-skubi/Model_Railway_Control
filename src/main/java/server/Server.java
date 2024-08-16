@@ -3,6 +3,7 @@ package server;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.Layout;
+import utils.Utils;
 import utils.datastructures.PriorityBlockingQueueWrapper;
 import java.util.concurrent.PriorityBlockingQueue;
 import utils.datastructures.Command;
@@ -33,13 +34,13 @@ public class Server {
         while (!shutdown) {
             try {
                 Command command = commandQueue.take();
-
-                System.out.println(command.getJson());
-
+                System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "working on: " + command.getJson());
                 switch (command.getJson().get("header").getAsJsonObject().get("from").getAsString()) {
-                    case "server" -> handleServerMessages(command.getJson());
+                    case "model" -> handleServerMessages(command.getJson());
                     case "cs3" -> handleCS3Messages(command.getJson());
-                    case "ui" -> handleUIMessages(command.getJson());
+                    case "webClient" -> handleUIMessages(command.getJson());
+                    default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Message Origin not known");
+
                 }
 
             } catch (InterruptedException e) {
@@ -51,6 +52,11 @@ public class Server {
     private void handleServerMessages(JsonObject json) {
         JsonObject header = json.get("header").getAsJsonObject();
         JsonObject body = json.get("body").getAsJsonObject();
+
+        switch (header.get("commandType").getAsString()) {
+            case "requestViewAnswer" -> threadPool.submit(clientHandler.sendToClientClass(json));
+            default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
+        }
     }
     private void handleCS3Messages(JsonObject json) {
         JsonObject header = json.get("header").getAsJsonObject();
@@ -62,8 +68,9 @@ public class Server {
 
         switch (header.get("commandType").getAsString()) {
             case "shutdown" -> this.shutdown = true;                                                                    //TODO: Interrupt all Running Threads;
-            case "requestView" -> threadPool.submit(model.requestView(body,queueWrapper,header.get("clientId").getAsInt()));
-            default -> {}
+            case "requestView" -> threadPool.submit(model.requestView(body,queueWrapper,header.get("clientID").getAsInt()));
+            default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
+
         }
     }
 }

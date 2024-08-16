@@ -1,5 +1,6 @@
 package layout;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
@@ -29,6 +30,21 @@ public class Layout {
 
     public ViewHandler.RequestViewClass requestView(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, int clientId) {
         return viewHandler.requestViewClass(command,queue,clientId);
+    }
+
+    public JsonObject save() {
+        JsonObject json = new JsonObject();
+        json.addProperty("idGenerator", idGenerator.save());
+
+        JsonArray componentArray = new JsonArray();
+        components.forEach(component -> {
+            componentArray.add(component.save());
+        });
+
+        json.add("views", viewHandler.save());
+
+        json.add("components",componentArray);
+        return json;
     }
 
 }

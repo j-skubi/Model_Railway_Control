@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.JsonObject;
+import utils.Utils;
 import utils.datastructures.Command;
 import utils.datastructures.PriorityBlockingQueueWrapper;
 
@@ -31,14 +33,29 @@ public class ClientHandler implements Runnable {
     }
     @Override
     public void run() {
-        System.out.println("[" + Thread.currentThread().getName() + "] Listening for incoming connections on port: " + socket.getLocalPort());
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Listening for incoming connections on port: " + socket.getLocalPort());
         while (!shutdown) {
             try {
                 clients.add(new Client(socket.accept(),nextClientId++,commandQueue));
-                System.out.println("[" + Thread.currentThread().getName() + "] Accepted new Client with clientID: " + (nextClientId - 1));
+                System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Accepted new Client with clientID: " + (nextClientId - 1));
             } catch (IOException e) {
                 //TODO: Error Handling
             }
+        }
+    }
+
+    public SendToClientClass sendToClientClass(JsonObject json) {
+        return new SendToClientClass(json);
+    }
+    public class SendToClientClass implements  Runnable {
+        private final JsonObject json;
+        public SendToClientClass(JsonObject json) {
+            this.json = json;
+        }
+        @Override
+        public void run() {
+            clients.stream().filter(client -> client.getId() == json.get("header").getAsJsonObject().get("clientId").getAsInt())
+                    .findFirst().ifPresent(client -> client.send(json));
         }
     }
 }

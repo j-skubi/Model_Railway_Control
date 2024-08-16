@@ -26,11 +26,12 @@ public class TurnoutView extends ViewComponent {
     }
 
     @Override
-    public JsonObject basicClientInfo() {
+    public JsonObject toClient() {
         JsonObject json = super.save();
 
         json.addProperty("type", "TURNOUT");
         json.addProperty("state", turnout.getState());
+        json.add("legalStates", turnout.getLegalStatesAsJsonArray());
 
         return json;
     }

@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import utils.Utils;
 import utils.datastructures.Command;
 import utils.datastructures.PriorityBlockingQueueWrapper;
 import utils.datastructures.WebSocketFrame;
@@ -32,7 +33,7 @@ public class Client implements Runnable{
         this.client = socket;
         out = client.getOutputStream();
 
-        Thread clientHandler = new Thread(this, "clientListener");
+        Thread clientHandler = new Thread(this, "ClientListener");
         clientHandler.start();
     }
 
@@ -43,6 +44,9 @@ public class Client implements Runnable{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public int getId() {
+        return clientId;
     }
 
     @Override
@@ -73,12 +77,10 @@ public class Client implements Runnable{
                 String content = new String(w.getPayload());
                 try {
                     JsonObject json = JsonParser.parseString(content).getAsJsonObject();
-                    System.out.println(json);
                     handleRequest(json);
                 } catch (IllegalStateException e) {
-                    System.err.println("Received Illegal byte String from Client " + clientId + "!! Possible Connection Loss");
-                    System.err.println(content);
-                    System.err.println("Shutting down Client with ID: " + clientId);
+                    System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", "Received Illegal byte String: " + content);
+                    System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", "Shutting down Client with ID: " + clientId);
                     this.shutdown = true;
                 }
             }
@@ -89,16 +91,17 @@ public class Client implements Runnable{
     }
 
     private void handleRequest(JsonObject json) {
-        System.out.println("[Client " + clientId + "] " + json.toString());
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", json.toString());
         try {
             JsonObject header = json.get("header").getAsJsonObject();
             JsonObject body = json.get("body").getAsJsonObject();
             switch (header.get("messageType").getAsString()) {
                 case "Request" -> queue.add(new Command(1000,body));
                 case "Set" -> queue.add(new Command(500,body));
+                case "Ignore" -> {}
             }
         } catch (NullPointerException e) {
-            System.err.println("[Client " + clientId + "] " + "Json Not defined by protocol");
+            System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", "Json Not defined by protocol");
         }
     }
     private JsonObject welcomeMessage() {

@@ -21,7 +21,7 @@ public class ComponentView extends View {
             viewComponents.insert(ViewComponent.fromJSON(this,viewComponent.getAsJsonObject(), model));
         }
     }
-
+    @Override
     public JsonObject save() {
         JsonObject json = new JsonObject();
 
@@ -41,6 +41,21 @@ public class ComponentView extends View {
         return json;
     }
     public JsonObject toClient() {
-        return null;
+        isActive = true;
+        JsonObject json = new JsonObject();
+
+        JsonObject metadata = new JsonObject();
+        metadata.addProperty("type",TYPE);
+        metadata.addProperty("size", viewComponents.size());
+
+        json.add("metadata",metadata);
+
+        JsonArray viewComponentArray = new JsonArray();
+        viewComponents.forEach(viewComponent -> {
+            viewComponentArray.add(viewComponent.toClient());
+        });
+        json.add("viewComponents", viewComponentArray);
+
+        return json;
     }
 }
