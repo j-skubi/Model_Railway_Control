@@ -1,3 +1,4 @@
+import { send } from "../WebSocket";
 
 type ControlState = {
     clientID: number | undefined
@@ -11,6 +12,10 @@ export default function controlReducer (controlState: ControlState = initialStat
     switch (action.type) {
         case 'initialMessage': {
             return {clientID: action.payload.body.clientID }
+        }
+        case 'sendToServer': {
+            send(action.payload);
+            return controlState;
         }
         default:
             return controlState

@@ -29,7 +29,7 @@ public class Server {
         queueWrapper = new PriorityBlockingQueueWrapper<>(commandQueue);
 
         model = new Layout(saveFile);
-        layout = new LayoutCommunicationHandler();
+        layout = new LayoutCommunicationHandler(queueWrapper);
         clientHandler = new ClientHandler(port,queueWrapper);
     }
 
@@ -40,7 +40,7 @@ public class Server {
                 System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Dispatching: " + command.getJson());
                 switch (command.getJson().get("header").getAsJsonObject().get("from").getAsString()) {
                     case "view" -> handleViewMessages(command.getJson());
-                    case "cs3" -> handleCS3Messages(command.getJson());
+                    case "layout" -> handleLayoutMessages(command.getJson());
                     case "webClient" -> handleUIMessages(command.getJson());
                     default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Message Origin not known");
 
@@ -58,13 +58,19 @@ public class Server {
 
         switch (header.get("commandType").getAsString()) {
             case "requestViewAnswer" -> threadPool.submit(clientHandler.sendToClientClass(json));
+            case "notifyChange" -> threadPool.submit(clientHandler.sendByActiveView(json));
             case "setState" -> threadPool.submit(layout.setStateClass(body));
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
         }
     }
-    private void handleCS3Messages(JsonObject json) {
+    private void handleLayoutMessages(JsonObject json) {
         JsonObject header = json.get("header").getAsJsonObject();
         JsonObject body = json.get("body").getAsJsonObject();
+
+        switch (header.get("commandType").getAsString()) {
+            case "notifyChange" -> threadPool.submit(model.notifyChangeClass(body,queueWrapper));
+            default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
+        }
     }
     private void handleUIMessages(JsonObject json) {
         JsonObject header = json.get("header").getAsJsonObject();

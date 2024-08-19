@@ -3,8 +3,10 @@ package layout.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import utils.datastructures.AVLTree.AVLDataElement;
+import utils.datastructures.Command;
 import utils.datastructures.Event;
 import utils.datastructures.EventListener;
+import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +36,8 @@ public abstract class LayoutComponent implements AVLDataElement {
         });
     }
 
-    private void notifyListeners(Event event) {
-        listeners.stream().filter(s -> s.doesConsume(event.getEventType())).forEach(e -> e.apply(event));
+    protected void notifyListeners(Event event) {
+        listeners.stream().filter(s -> s.doesConsume(event.eventType())).forEach(e -> e.apply(event));
     }
     public void addListener(EventListener eventListener) {
         listeners.add(eventListener);
@@ -81,6 +83,8 @@ public abstract class LayoutComponent implements AVLDataElement {
         }
         addressMapping.get(addressSpace).get(state).add(mapping);
     }
+
+    public abstract void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
 
     public static LayoutComponent fromJson(JsonObject json) {
         return switch (json.get("type").getAsString()) {

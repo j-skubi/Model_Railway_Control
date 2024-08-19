@@ -6,6 +6,7 @@ import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
 import layout.views.ViewHandler;
 import utils.IDGenerator;
+import utils.Utils;
 import utils.datastructures.AVLTree;
 import utils.datastructures.Command;
 import utils.datastructures.PriorityBlockingQueueWrapper;
@@ -28,13 +29,6 @@ public class Layout {
         viewHandler = new ViewHandler(json.get("views").getAsJsonObject(), components);
     }
 
-    public ViewHandler.RequestViewClass requestView(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, int clientId) {
-        return viewHandler.requestViewClass(command,queue,clientId);
-    }
-    public ViewHandler.ChangeComponentStateClass changeComponentStateClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
-        return viewHandler.changeComponentStateClass(command,queue);
-    }
-
     public JsonObject save() {
         JsonObject json = new JsonObject();
         json.addProperty("idGenerator", idGenerator.save());
@@ -49,5 +43,31 @@ public class Layout {
         json.add("components",componentArray);
         return json;
     }
+
+    public ViewHandler.RequestViewClass requestView(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, int clientId) {
+        return viewHandler.requestViewClass(command,queue,clientId);
+    }
+    public ViewHandler.ChangeComponentStateClass changeComponentStateClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return viewHandler.changeComponentStateClass(command,queue);
+    }
+    public NotifyChangeClass notifyChangeClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return new NotifyChangeClass(command, queue);
+    }
+
+    public class NotifyChangeClass implements Runnable{
+        private final JsonObject command;
+        private final PriorityBlockingQueueWrapper<Command> queue;
+        public NotifyChangeClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+            this.command = command;
+            this.queue = queue;
+        }
+        @Override
+        public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: " + command.toString());
+            LayoutComponent component = components.find(command.get("modelID").getAsInt());
+            component.notifyChange(command, queue);
+        }
+    }
+
 
 }

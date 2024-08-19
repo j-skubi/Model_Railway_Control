@@ -27,6 +27,7 @@ public class Client implements Runnable{
     private final OutputStream out;
     private final int clientID;
 
+
     public Client(Socket socket, int clientId, PriorityBlockingQueueWrapper<Command> queue) throws IOException {
         this.queue = queue;
         this.clientID = clientId;
@@ -97,8 +98,8 @@ public class Client implements Runnable{
             JsonObject header = json.get("header").getAsJsonObject();
             JsonObject body = json.get("body").getAsJsonObject();
             switch (header.get("messageType").getAsString()) {
-                case "Request" -> queue.add(new Command(1000,body));
-                case "Set" -> queue.add(new Command(500,body));
+                case "Request" -> {queue.add(new Command(1000,body));}
+                case "ChangeState" -> queue.add(new Command(500,body));
                 case "Ignore" -> {}
             }
         } catch (NullPointerException e) {

@@ -1,13 +1,21 @@
 package layoutCommunication;
 
 import com.google.gson.JsonObject;
+import utils.datastructures.Command;
+import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AddressSpaceHandler {
-    private String type;
+    private final String type;
+    protected final PriorityBlockingQueueWrapper<Command> queue;
 
-    public abstract void send(JsonObject json);
+    public AddressSpaceHandler(String type, PriorityBlockingQueueWrapper<Command> queue) {
+        this.type = type;
+        this.queue = queue;
+    }
+
+    public abstract void applyStateMappings(JsonObject command);
 
     @Override
     public boolean equals(Object o) {
@@ -18,22 +26,5 @@ public abstract class AddressSpaceHandler {
             return type.equals(((AddressSpaceHandler) o).type);
         }
         return false;
-    }
-    private boolean hasStateMapping(String state, JsonObject addressSpace) {
-        try {
-            if (!addressSpace.get("type").getAsString().equals(type)) {
-                return false;
-            }
-            AtomicBoolean containsStateMapping = new AtomicBoolean(false);
-            addressSpace.get("StateMappings").getAsJsonArray().forEach(mapping -> {
-                if (mapping.getAsJsonObject().has(state)) {
-                    containsStateMapping.set(true);
-                }
-            });
-            return containsStateMapping.get();
-
-        } catch (NullPointerException e) {
-            return false;
-        }
     }
 }

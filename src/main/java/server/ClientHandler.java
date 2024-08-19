@@ -44,6 +44,21 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    private JsonObject wrapJsonObject(JsonObject json) {
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Wrapping Message: " + json);
+        JsonObject message = new JsonObject();
+        JsonObject messageHeader = new JsonObject();
+        messageHeader.addProperty("messageType",
+                switch (json.get("header").getAsJsonObject().get("commandType").getAsString()) {
+                    case "requestViewAnswer" -> "RequestAnswer";
+                    case "notifyChange" -> "notifyChange";
+                    default -> "Ignore";
+                });
+        message.add("header",messageHeader);
+        message.add("body",json);
+        return message;
+    }
+
     public SendToClientClass sendToClientClass(JsonObject json) {
         return new SendToClientClass(json);
     }
@@ -58,19 +73,25 @@ public class ClientHandler implements Runnable {
             clients.stream().filter(client -> client.getId() == json.get("header").getAsJsonObject().get("to").getAsInt())
                     .findFirst().ifPresent(client -> client.send(message));
         }
+    }
 
-        private JsonObject wrapJsonObject(JsonObject json) {
-            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Wrapping Message: " + json);
-            JsonObject message = new JsonObject();
-            JsonObject messageHeader = new JsonObject();
-            messageHeader.addProperty("messageType",
-                    switch (json.get("header").getAsJsonObject().get("commandType").getAsString()) {
-                        case "requestViewAnswer" -> "RequestAnswer";
-                        default -> "Ignore";
+    public SendByActiveView sendByActiveView(JsonObject json) {
+        return new SendByActiveView(json);
+    }
+    public class SendByActiveView implements  Runnable {
+        private final JsonObject json;
+        public SendByActiveView (JsonObject command) {
+            this.json = command;
+        }
+
+        @Override
+        public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Sending Message to all active Viewers");
+            JsonObject message = wrapJsonObject(json);
+            clients.forEach(client -> {
+                client.send(message);
             });
-            message.add("header",messageHeader);
-            message.add("body",json);
-            return message;
+
         }
     }
 }

@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import utils.datastructures.Command;
+import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +31,11 @@ class LayoutComponentTest {
 
         public MockLayoutComponent(JsonObject json) {
             super(json);
+        }
+
+        @Override
+        public void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+
         }
     }
     private static final String jsonString = """

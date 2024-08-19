@@ -3,13 +3,17 @@ package layout.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import exceptions.IllegalStateException;
+import utils.Utils;
+import utils.datastructures.Command;
+import utils.datastructures.Event;
+import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Turnout extends LayoutComponent {
     private final List<String> legalStates;
-    private String state;
+    private String state = "straight";
     public Turnout(int id) {
         super(id, "TURNOUT");
         this.legalStates = new ArrayList<>();
@@ -48,10 +52,29 @@ public class Turnout extends LayoutComponent {
         }
 
         json.addProperty("type", this.type);
+        json.addProperty("modelID", this.id);
         json.addProperty("newState", newState);
         json.add("addressMapping", this.getAddressMappingAsJsonArray());
 
         return json;
+    }
+    @Override
+    public void notifyChange(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
+        if (!json.get("type").getAsString().equals(type)) {
+            System.err.println("Wrong TYPE");
+            return;
+        }
+        if (legalStates.contains(json.get("newState").getAsString())) {
+            JsonObject additionalInfo = new JsonObject();
+            additionalInfo.addProperty("oldState", state);
+            state = json.get("newState").getAsString();
+            additionalInfo.addProperty("newState", state);
+
+            this.notifyListeners(new Event(Event.EventType.StateChange, additionalInfo, queue));
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Notified All Listeners");
+        }
+
+
     }
 
 }

@@ -3,7 +3,7 @@ package layout.views;
 import com.google.gson.JsonObject;
 
 public abstract class View {
-    protected boolean isActive;
+    protected boolean isActive = true;
 
     public boolean isActive() {
         return isActive;

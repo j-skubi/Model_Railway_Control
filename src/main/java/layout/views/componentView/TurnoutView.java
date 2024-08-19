@@ -4,6 +4,9 @@ import com.google.gson.JsonObject;
 import exceptions.IllegalStateException;
 import layout.model.LayoutComponent;
 import layout.model.Turnout;
+import utils.Utils;
+import utils.datastructures.Command;
+import utils.datastructures.Event;
 
 import java.util.List;
 
@@ -54,5 +57,26 @@ public class TurnoutView extends ViewComponent {
             throw new RuntimeException(e);
         }
         return json;
+    }
+
+    @Override
+    public boolean doesConsume(Event.EventType eventType) {
+        return true;
+    }
+
+    @Override
+    public void apply(Event event) {
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Notify TurnoutView");
+        JsonObject header = new JsonObject();
+        header.addProperty("from", "view");
+        header.addProperty("to", "COMPONENT-VIEW");
+        header.addProperty("commandType", "notifyChange");
+
+        JsonObject body = event.additionalInfo();
+        body.addProperty("viewID", this.viewID);
+        JsonObject response = new JsonObject();
+        response.add("header",header);
+        response.add("body",body);
+        event.queue().add(new Command(100, response));
     }
 }

@@ -9,6 +9,34 @@ public class Main {
             {
                 "components": [
                     {
+                        "type": "TURNOUT",
+                        "id": 1,
+                        "LegalStates" : [
+                            "left",
+                            "straight",
+                            "right"
+                        ],
+                        "AddressSpaceMappings": [
+                            {
+                                "AddressSpace": "mock",
+                                "StateMappings": [
+                                    {
+                                        "State": "straight",
+                                        "Mapping":[]
+                                    },
+                                    {
+                                        "State": "left",
+                                        "Mapping":[]
+                                    },
+                                    {
+                                        "State": "right",
+                                        "Mapping":[]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                       "type": "TURNOUT",
                       "id": 0,
                       "LegalStates" : [
@@ -17,7 +45,7 @@ public class Main {
                       ],
                       "AddressSpaceMappings": [
                         {
-                          "AddressSpace": "cs3",
+                          "AddressSpace": "mock",
                           "StateMappings": [
                             {
                               "State": "straight",
@@ -77,6 +105,12 @@ public class Main {
                                 "modelID": 0,
                                 "viewID": 1,
                                 "name": "turn1"
+                            },
+                            {
+                                "type": "TURNOUT-VIEW",
+                                "modelID": 1,
+                                "viewID": 0,
+                                "name": "turn2"
                             }
                         ]
                     }

@@ -1,11 +1,11 @@
-import {Text} from 'react-native'
+import {Button, Text} from 'react-native'
 import store from '../Redux/store'
 
 export function Turnout(props: {viewID: number, name : string, state: string}) {
-    console.log(props.name)
+    const title = "ViewID: " + props.viewID + " Name: " + props.name + " State: " + props.state;
     return (
         <div>
-            <Text onPress={() => store.dispatch(createChangeStateAction(props.viewID))}> {props.viewID} {props.name} {props.state}</Text>
+            <Button onPress={() => store.dispatch(createChangeStateAction(props.viewID))} title={title}></Button>
         </div>
     )
 }
@@ -13,10 +13,10 @@ export function Turnout(props: {viewID: number, name : string, state: string}) {
 
 function createChangeStateAction(viewID: number) : any{ 
 return {
-    type: "a",
+    type: "sendToServer",
     payload: {
     header : {
-        messageType: "StateChange"
+        messageType: "ChangeState"
     },
     body : {
         header : {
@@ -26,7 +26,8 @@ return {
             to: "model"
         },
         body : {
-            componentID: viewID
+            viewType: "COMPONENT-VIEW",
+            viewID: viewID
         }
     }
 }

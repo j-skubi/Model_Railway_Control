@@ -1,14 +1,8 @@
 package utils.datastructures;
 
-public class Event {
-    private final EventType eventType;
-    public Event(EventType eventType) {
-        this.eventType = eventType;
-    }
+import com.google.gson.JsonObject;
 
-    public EventType getEventType() {
-        return eventType;
-    }
+public record Event(utils.datastructures.Event.EventType eventType, JsonObject additionalInfo, PriorityBlockingQueueWrapper<Command> queue) {
     public enum EventType {
         StateChange
     }

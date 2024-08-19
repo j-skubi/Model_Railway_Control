@@ -4,12 +4,13 @@ import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
 import utils.datastructures.AVLTree;
+import utils.datastructures.EventListener;
 
-public abstract class ViewComponent implements AVLTree.AVLDataElement {
+public abstract class ViewComponent implements AVLTree.AVLDataElement, EventListener {
     private final ComponentView parent;
 
 
-    private final int viewID;
+    protected final int viewID;
     protected final LayoutComponent model;
 
     private final String name;
@@ -19,6 +20,8 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement {
         this.model = model;
         this.parent = parent;
         this.name = "";
+
+        model.addListener(this);
     }
 
     public ViewComponent(ComponentView parent, JsonObject json, LayoutComponent component) {
@@ -26,6 +29,8 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement {
         this.model = component;
         this.parent = parent;
         this.name = json.get("name").getAsString();
+
+        model.addListener(this);
     }
 
     @Override

@@ -28,6 +28,11 @@ function onMessage (messageEvent : MessageEvent) {
         }
         case "RequestAnswer": {
             store.dispatch({type: message.body.header.commandType, payload: message.body});
+            break;
+        }
+        case "notifyChange": {
+            store.dispatch({type: message.body.header.commandType, payload: message.body.body})
+            break;
         }
     }
 
