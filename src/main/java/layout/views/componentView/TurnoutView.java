@@ -1,8 +1,11 @@
 package layout.views.componentView;
 
 import com.google.gson.JsonObject;
+import exceptions.IllegalStateException;
 import layout.model.LayoutComponent;
 import layout.model.Turnout;
+
+import java.util.List;
 
 public class TurnoutView extends ViewComponent {
     private final Turnout turnout;
@@ -33,6 +36,23 @@ public class TurnoutView extends ViewComponent {
         json.addProperty("state", turnout.getState());
         json.add("legalStates", turnout.getLegalStatesAsJsonArray());
 
+        return json;
+    }
+
+    @Override
+    public JsonObject changeState() {
+
+        List<String> legalStates = turnout.getLegalStates();
+        int currentIndex = legalStates.indexOf(turnout.getState());
+        String nextState = legalStates.get((currentIndex + 1) % legalStates.size());
+
+        JsonObject json;
+        try {
+            json = turnout.setState(nextState);
+        } catch (IllegalStateException e) {
+            System.err.println("Exception in ChangeState in TurnoutView. Unreachable check Code!!");
+            throw new RuntimeException(e);
+        }
         return json;
     }
 }

@@ -25,11 +25,11 @@ public class Client implements Runnable{
     private final PriorityBlockingQueueWrapper<Command> queue;
     private final Socket client;
     private final OutputStream out;
-    private final int clientId;
+    private final int clientID;
 
     public Client(Socket socket, int clientId, PriorityBlockingQueueWrapper<Command> queue) throws IOException {
         this.queue = queue;
-        this.clientId = clientId;
+        this.clientID = clientId;
         this.client = socket;
         out = client.getOutputStream();
 
@@ -38,6 +38,7 @@ public class Client implements Runnable{
     }
 
     public void send(JsonObject jsonObject) {
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Sending to client " + clientID + ": " + jsonObject.toString());
         new WebSocketFrame(jsonObject.toString().getBytes(StandardCharsets.UTF_8)).writeTo(out);
         try {
             out.flush();
@@ -46,7 +47,7 @@ public class Client implements Runnable{
         }
     }
     public int getId() {
-        return clientId;
+        return clientID;
     }
 
     @Override
@@ -79,8 +80,8 @@ public class Client implements Runnable{
                     JsonObject json = JsonParser.parseString(content).getAsJsonObject();
                     handleRequest(json);
                 } catch (IllegalStateException e) {
-                    System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", "Received Illegal byte String: " + content);
-                    System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", "Shutting down Client with ID: " + clientId);
+                    System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Received Illegal byte String: " + content);
+                    System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Shutting down Client with ID: " + clientID);
                     this.shutdown = true;
                 }
             }
@@ -91,7 +92,7 @@ public class Client implements Runnable{
     }
 
     private void handleRequest(JsonObject json) {
-        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", json.toString());
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Received: " + json.toString());
         try {
             JsonObject header = json.get("header").getAsJsonObject();
             JsonObject body = json.get("body").getAsJsonObject();
@@ -101,23 +102,29 @@ public class Client implements Runnable{
                 case "Ignore" -> {}
             }
         } catch (NullPointerException e) {
-            System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientId + "]", "Json Not defined by protocol");
+            System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Json Not defined by protocol");
         }
     }
     private JsonObject welcomeMessage() {
         JsonObject json = new JsonObject();
 
-        json.addProperty("store", "control");
+        JsonObject messageHeader = new JsonObject();
+        messageHeader.addProperty("messageType", "controlData");
+        json.add("header",messageHeader);
 
-        JsonObject action = new JsonObject();
-        action.addProperty("type", "initialMessage");
+        JsonObject messageBody = new JsonObject();
 
-        JsonObject payload = new JsonObject();
-        payload.addProperty("clientID", clientId);
+        JsonObject commandHeader = new JsonObject();
+        commandHeader.addProperty("commandType", "initialMessage");
+        commandHeader.addProperty("from", "server");
+        commandHeader.addProperty("to", clientID);
+        messageBody.add("header", commandHeader);
 
-        action.add("payload",payload);
-        json.add("action", action);
+        JsonObject commandBody = new JsonObject();
+        commandBody.addProperty("clientID", clientID);
+        messageBody.add("body",commandBody);
 
+        json.add("body",messageBody);
         return json;
     }
 }

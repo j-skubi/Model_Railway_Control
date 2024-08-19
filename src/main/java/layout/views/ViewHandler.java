@@ -45,12 +45,12 @@ public class ViewHandler {
 
         @Override
         public void run() {
-            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "working RequestView from Client " + clientId);
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: RequestView from Client " + clientId);
 
             String viewType = command.get("viewType").getAsString();
 
             JsonObject header = new JsonObject();
-            header.addProperty("from", "model");
+            header.addProperty("from", "view");
             header.addProperty("to", clientId);
             header.addProperty("commandType", "requestViewAnswer");
 
@@ -61,6 +61,39 @@ public class ViewHandler {
             response.add("body", body);
 
             queue.add(new Command(1000, response));
+        }
+    }
+    public ChangeComponentStateClass changeComponentStateClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return new ChangeComponentStateClass(command,queue);
+    }
+    public class ChangeComponentStateClass implements Runnable {
+        private final PriorityBlockingQueueWrapper<Command> queue;
+        private final JsonObject command;
+
+        public ChangeComponentStateClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+            this.queue = queue;
+            this.command = command;
+        }
+
+        @Override
+        public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: ChangeState");
+
+
+            String viewType = command.get("viewType").getAsString();
+
+            JsonObject header = new JsonObject();
+            header.addProperty("from", "view");
+            header.addProperty("to", "cs3");
+            header.addProperty("commandType", "setState");
+
+            JsonObject body = views.get(viewType).changeState(command.get("viewID").getAsInt());
+
+            JsonObject response = new JsonObject();
+            response.add("header", header);
+            response.add("body", body);
+
+            queue.add(new Command(200,response));
         }
     }
 

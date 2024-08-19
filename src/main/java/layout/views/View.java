@@ -11,4 +11,5 @@ public abstract class View {
 
     public abstract JsonObject toClient();
     public abstract JsonObject save();
+    public abstract JsonObject changeState(int viewID);
 }

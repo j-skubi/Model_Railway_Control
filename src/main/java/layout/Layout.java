@@ -31,6 +31,9 @@ public class Layout {
     public ViewHandler.RequestViewClass requestView(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, int clientId) {
         return viewHandler.requestViewClass(command,queue,clientId);
     }
+    public ViewHandler.ChangeComponentStateClass changeComponentStateClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return viewHandler.changeComponentStateClass(command,queue);
+    }
 
     public JsonObject save() {
         JsonObject json = new JsonObject();

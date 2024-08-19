@@ -2,6 +2,7 @@ package layout.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import exceptions.IllegalStateException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,22 @@ public class Turnout extends LayoutComponent {
     public JsonArray getLegalStatesAsJsonArray() {
         JsonArray json = new JsonArray();
         legalStates.forEach(json::add);
+        return json;
+    }
+    public List<String> getLegalStates() {
+        return legalStates;
+    }
+    public JsonObject setState(String newState) throws IllegalStateException {
+        JsonObject json = new JsonObject();
+
+        if (!legalStates.contains(newState)) {
+            throw new IllegalStateException("State " + newState + " is not included in legalStates");
+        }
+
+        json.addProperty("type", this.type);
+        json.addProperty("newState", newState);
+        json.add("addressMapping", this.getAddressMappingAsJsonArray());
+
         return json;
     }
 

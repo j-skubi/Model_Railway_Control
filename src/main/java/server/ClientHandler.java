@@ -54,8 +54,23 @@ public class ClientHandler implements Runnable {
         }
         @Override
         public void run() {
-            clients.stream().filter(client -> client.getId() == json.get("header").getAsJsonObject().get("clientId").getAsInt())
-                    .findFirst().ifPresent(client -> client.send(json));
+            JsonObject message = wrapJsonObject(json);
+            clients.stream().filter(client -> client.getId() == json.get("header").getAsJsonObject().get("to").getAsInt())
+                    .findFirst().ifPresent(client -> client.send(message));
+        }
+
+        private JsonObject wrapJsonObject(JsonObject json) {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Wrapping Message: " + json);
+            JsonObject message = new JsonObject();
+            JsonObject messageHeader = new JsonObject();
+            messageHeader.addProperty("messageType",
+                    switch (json.get("header").getAsJsonObject().get("commandType").getAsString()) {
+                        case "requestViewAnswer" -> "RequestAnswer";
+                        default -> "Ignore";
+            });
+            message.add("header",messageHeader);
+            message.add("body",json);
+            return message;
         }
     }
 }

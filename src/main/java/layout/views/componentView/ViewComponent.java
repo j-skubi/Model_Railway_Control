@@ -12,7 +12,7 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement {
     private final int viewID;
     protected final LayoutComponent model;
 
-    private String name;
+    private final String name;
 
     public ViewComponent(ComponentView parent, int id, LayoutComponent model) {
         this.viewID = id;
@@ -51,6 +51,7 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement {
 
         return json;
     }
+    public abstract JsonObject changeState();
 
     public static ViewComponent fromJSON(ComponentView parent, JsonObject json, AVLTree<LayoutComponent> model) throws CorruptedSaveFile {
 

@@ -58,4 +58,7 @@ public class ComponentView extends View {
 
         return json;
     }
+    public JsonObject changeState(int viewID) {
+        return viewComponents.find(viewID).changeState();
+    }
 }
