@@ -104,6 +104,7 @@ public class Client implements Runnable{
             switch (header.get("messageType").getAsString()) {
                 case "Request" -> queue.add(new Command(1000,body));
                 case "ChangeState" -> queue.add(new Command(500,body));
+                case "Edit" -> queue.add(new Command(1500, body));
                 case "ServerShutdown" -> queue.add(new Command(1, body));
                 case "Ignore" -> {}
             }

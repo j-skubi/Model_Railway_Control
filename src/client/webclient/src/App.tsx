@@ -4,7 +4,7 @@ import { Button } from 'react-native'
 import './App.css';
 import { connect,send } from './WebSocket';
 import store from './Redux/store';
-import { Shutdown, Turnout } from './componentView/viewComponents';
+import AddTurnoutDataForm, { Shutdown, Turnout } from './componentView/viewComponents';
 import { Provider, useSelector } from 'react-redux';
 import { viewComponent } from './Redux/dataReducer';
 
@@ -49,6 +49,7 @@ function App() {
     <Provider store={store}>
       <CustomButton></CustomButton>
       <Menu></Menu>
+      <AddTurnoutDataForm/>
     </Provider>
   )
 

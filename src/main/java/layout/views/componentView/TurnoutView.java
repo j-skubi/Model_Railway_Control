@@ -12,8 +12,8 @@ import java.util.List;
 
 public class TurnoutView extends ViewComponent {
     private final Turnout turnout;
-    public TurnoutView(ComponentView parent, int id, LayoutComponent model) {
-        super(parent,id,model);
+    public TurnoutView(ComponentView parent, int id, String name, LayoutComponent model) {
+        super(parent,id, name,model);
         turnout = (Turnout) this.model;
     }
     public TurnoutView(ComponentView parent, JsonObject json, LayoutComponent model) {

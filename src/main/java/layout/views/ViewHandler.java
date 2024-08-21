@@ -109,8 +109,20 @@ public class ViewHandler {
 
         @Override
         public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: " + command.toString());
             try {
-                queue.add(new Command(500, views.get(command.get("viewType").getAsString()).addViewComponent(command.get("component").getAsJsonObject(), model, generator)));
+                JsonObject newComponent = views.get(command.get("viewType").getAsString()).addViewComponent(command.get("component").getAsJsonObject(), model, generator);
+
+                JsonObject json = new JsonObject();
+                JsonObject header = new JsonObject();
+                header.addProperty("commandType", "addViewComponent");
+                header.addProperty("from", "view");
+                header.addProperty("to", "broadcast");
+
+                json.add("header",header);
+                json.add("body", newComponent);
+
+                queue.add(new Command(1000, json));
             } catch (CorruptedSaveFile e) {
                 throw new RuntimeException(e);
             }

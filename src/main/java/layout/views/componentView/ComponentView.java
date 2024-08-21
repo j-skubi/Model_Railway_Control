@@ -69,10 +69,10 @@ public class ComponentView extends View {
     public JsonObject addViewComponent(JsonObject component, AVLTree<LayoutComponent> model, IDGenerator generator) throws CorruptedSaveFile {
         assert(component.get("modelID") == null);
 
-        component.addProperty("modelID", generator.generateID());
+        component.addProperty("id", generator.generateID());
 
         LayoutComponent layoutComponent = LayoutComponent.fromJson(component);
-        ViewComponent viewComponent = ViewComponent.fromLayoutComponent(layoutComponent, this, generator.generateID());
+        ViewComponent viewComponent = ViewComponent.fromLayoutComponent(layoutComponent, this, generator.generateID(), component.get("name").getAsString());
 
         model.insert(layoutComponent);
         viewComponents.insert(viewComponent);

@@ -15,11 +15,11 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement, EventList
 
     private final String name;
 
-    public ViewComponent(ComponentView parent, int id, LayoutComponent model) {
+    public ViewComponent(ComponentView parent, int id, String name, LayoutComponent model) {
         this.viewID = id;
         this.model = model;
         this.parent = parent;
-        this.name = "";
+        this.name = name;
 
         model.addListener(this);
     }
@@ -64,9 +64,9 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement, EventList
             default -> throw new CorruptedSaveFile("No corresponding view for type " + json.get("type").getAsString() + "!");
         };
     }
-    public static ViewComponent fromLayoutComponent(LayoutComponent layoutComponent, ComponentView parent, int viewID) {
+    public static ViewComponent fromLayoutComponent(LayoutComponent layoutComponent, ComponentView parent, int viewID, String name) {
         return switch (layoutComponent.getType()) {
-            case "TURNOUT" -> new TurnoutView(parent, viewID, layoutComponent);
+            case "TURNOUT" -> new TurnoutView(parent, viewID, name, layoutComponent);
             default -> throw new RuntimeException("Unreachable");
         };
     }

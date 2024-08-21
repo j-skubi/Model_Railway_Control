@@ -99,6 +99,7 @@ public class Server {
     private void shutdown() {
         shutdown = true;
         try {
+            threadPool.shutdown();
             boolean threadPoolShutdown = threadPool.awaitTermination(2, TimeUnit.SECONDS);
 
             if (threadPoolShutdown) {
