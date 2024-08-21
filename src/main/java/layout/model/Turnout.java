@@ -21,7 +21,7 @@ public class Turnout extends LayoutComponent {
     public Turnout(JsonObject json) {
         super(json);
         legalStates = new ArrayList<>();
-        json.get("LegalStates").getAsJsonArray().forEach(state -> legalStates.add(state.getAsString()));
+        json.get("legalStates").getAsJsonArray().forEach(state -> legalStates.add(state.getAsString()));
     }
     @Override
     public JsonObject save() {
@@ -29,7 +29,7 @@ public class Turnout extends LayoutComponent {
 
         JsonArray legalStatesArray = new JsonArray();
         legalStates.forEach(legalStatesArray::add);
-        json.add("LegalStates", legalStatesArray);
+        json.add("legalStates", legalStatesArray);
 
         return json;
     }

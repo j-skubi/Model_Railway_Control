@@ -8,6 +8,12 @@
         },
         "viewComponents": [
           {
+            "viewID": -2147483647,
+            "modelID": -2147483648,
+            "name": "Turnout1",
+            "type": "TURNOUT-VIEW"
+          },
+          {
             "viewID": 0,
             "modelID": 1,
             "name": "turn2",
@@ -24,61 +30,94 @@
     },
     "components": [
       {
-        "id": 0,
+        "id": -2147483648,
         "type": "TURNOUT",
-        "AddressSpaceMappings": [
+        "addressSpaceMappings": [
           {
-            "AddressSpace": "virtual",
-            "StateMappings": [
+            "addressSpace": "mock",
+            "stateMappings": [
               {
-                "State": "straight",
-                "Mapping": [
+                "state": "Left",
+                "mapping": [
                   {
-                    "Address": 16,
-                    "Mapping": 1
+                    "address": 0,
+                    "mapping": 0
                   }
                 ]
               },
               {
-                "State": "turnout",
-                "Mapping": [
+                "state": "Straight",
+                "mapping": [
                   {
-                    "Address": 16,
-                    "Mapping": 1
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "AddressSpace": "mock",
-            "StateMappings": [
-              {
-                "State": "straight",
-                "Mapping": [
-                  {
-                    "Address": 16,
-                    "Mapping": 1
-                  },
-                  {
-                    "Address": 17,
-                    "Mapping": 1
-                  }
-                ]
-              },
-              {
-                "State": "turnout",
-                "Mapping": [
-                  {
-                    "Address": 16,
-                    "Mapping": 1
+                    "address": 0,
+                    "mapping": 1
                   }
                 ]
               }
             ]
           }
         ],
-        "LegalStates": [
+        "legalStates": [
+          "Straight",
+          "Left"
+        ]
+      },
+      {
+        "id": 0,
+        "type": "TURNOUT",
+        "addressSpaceMappings": [
+          {
+            "addressSpace": "virtual",
+            "stateMappings": [
+              {
+                "state": "straight",
+                "mapping": [
+                  {
+                    "address": 16,
+                    "mapping": 1
+                  }
+                ]
+              },
+              {
+                "state": "turnout",
+                "mapping": [
+                  {
+                    "address": 16,
+                    "mapping": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "addressSpace": "mock",
+            "stateMappings": [
+              {
+                "state": "straight",
+                "mapping": [
+                  {
+                    "address": 16,
+                    "mapping": 1
+                  },
+                  {
+                    "address": 17,
+                    "mapping": 1
+                  }
+                ]
+              },
+              {
+                "state": "turnout",
+                "mapping": [
+                  {
+                    "address": 16,
+                    "mapping": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "legalStates": [
           "straight",
           "left"
         ]
@@ -86,26 +125,26 @@
       {
         "id": 1,
         "type": "TURNOUT",
-        "AddressSpaceMappings": [
+        "addressSpaceMappings": [
           {
-            "AddressSpace": "mock",
-            "StateMappings": [
+            "addressSpace": "mock",
+            "stateMappings": [
               {
-                "State": "straight",
-                "Mapping": []
+                "state": "straight",
+                "mapping": []
               },
               {
-                "State": "left",
-                "Mapping": []
+                "state": "left",
+                "mapping": []
               },
               {
-                "State": "right",
-                "Mapping": []
+                "state": "right",
+                "mapping": []
               }
             ]
           }
         ],
-        "LegalStates": [
+        "legalStates": [
           "left",
           "straight",
           "right"

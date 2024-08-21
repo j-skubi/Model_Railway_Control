@@ -52,6 +52,7 @@ public class Server {
                     case "view" -> handleViewMessages(command.getJson());
                     case "layout" -> handleLayoutMessages(command.getJson());
                     case "webClient" -> handleUIMessages(command.getJson());
+                    case "clientHandler" -> handleClientHandlerMessages(command.getJson());
                     default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Message Origin not known");
 
                 }
@@ -67,7 +68,7 @@ public class Server {
 
         switch (header.get("commandType").getAsString()) {
             case "requestViewAnswer" -> threadPool.submit(clientHandler.sendToClientClass(json));
-            case "notifyChange" -> threadPool.submit(clientHandler.sendByActiveView(json));
+            case "notifyChange", "addViewComponent" -> threadPool.submit(clientHandler.sendByActiveView(json));
             case "setState" -> threadPool.submit(layout.setStateClass(body));
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
         }
@@ -94,6 +95,14 @@ public class Server {
             case "ServerShutdown" -> shutdown();
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
 
+        }
+    }
+    private void handleClientHandlerMessages(JsonObject json) {
+        JsonObject header = json.get("header").getAsJsonObject();
+        JsonObject body = json.get("body").getAsJsonObject();
+
+        switch (header.get("commandType").getAsString()) {
+            case "shutdownClient" -> clientHandler.shutdown(body.get("clientID").getAsInt());
         }
     }
     private void shutdown() {

@@ -3,15 +3,15 @@ import store from '../Redux/store'
 import { useState } from 'react'
 import './FormStyles.css'
 
-interface TurnoutData {
+export type TurnoutData = {
     type: "TURNOUT",
     viewID: number,
     name: string,
     state: string,
-    LegalStates: string[],
-    AddressSpaceMappings: AddressSpaceMapping[]
+    legalStates: string[],
+    addressSpaceMappings: AddressSpaceMapping[]
 }
-interface AddressSpaceMapping {
+export type AddressSpaceMapping = {
     addressSpace: string,
     stateMappings: {
         state: string,
@@ -43,20 +43,20 @@ const AddTurnoutDataForm: React.FC = () => {
     const [viewID, setViewID] = useState<number>(0);
     const [name, setName] = useState<string>('');
     const [state, setState] = useState<string>('');
-    const [LegalStates, setLegalStates] = useState<string>('');
-    const [AddressSpaceMappings, setAddressMapping] = useState<AddressSpaceMapping[]>([]);
+    const [legalStates, setLegalStates] = useState<string>('');
+    const [addressSpaceMappings, setAddressMapping] = useState<AddressSpaceMapping[]>([]);
 
 
     const handleSubmit = () => {
-        const legalStatesArray = LegalStates.split(',').map(s => s.trim());
+        const legalStatesArray = legalStates.split(',').map(s => s.trim());
 
         const newTurnoutData: TurnoutData = {
             type: "TURNOUT",
             viewID,
             name,
             state,
-            LegalStates: legalStatesArray,
-            AddressSpaceMappings,
+            legalStates: legalStatesArray,
+            addressSpaceMappings,
         };
 
         store.dispatch({type: "addComponent", payload: newTurnoutData})
@@ -88,12 +88,12 @@ const AddTurnoutDataForm: React.FC = () => {
             <div>
                 <label>
                     Legal States (comma-separated):
-                    <input type="text" value={LegalStates} onChange={e => setLegalStates(e.target.value)} />
+                    <input type="text" value={legalStates} onChange={e => setLegalStates(e.target.value)} />
                 </label>
             </div>
 
             {/* AddressMappingForm component to handle address mappings */}
-            <AddressMappingForm addressMapping={AddressSpaceMappings} setAddressMapping={setAddressMapping} />
+            <AddressMappingForm addressMapping={addressSpaceMappings} setAddressMapping={setAddressMapping} />
 
             <button type="submit">Submit</button>
         </form>
@@ -249,8 +249,8 @@ const standardTurnoutValues : TurnoutData = {
     viewID: 0,
     name: "turnout",
     state: "straight",
-    LegalStates: ["straight", "right"],
-    AddressSpaceMappings: [
+    legalStates: ["straight", "right"],
+    addressSpaceMappings: [
         {
             addressSpace: "mock",
             stateMappings: [

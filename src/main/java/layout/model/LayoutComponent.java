@@ -28,11 +28,11 @@ public abstract class LayoutComponent implements AVLDataElement {
     }
     public LayoutComponent(JsonObject json) {
         this(json.get("id").getAsInt(), json.get("type").getAsString());
-        json.get("AddressSpaceMappings").getAsJsonArray().forEach(add -> {
+        json.get("addressSpaceMappings").getAsJsonArray().forEach(add -> {
             HashMap<String, JsonArray> address = new HashMap<>();
-            addressMapping.put(add.getAsJsonObject().get("AddressSpace").getAsString(), address);
-            add.getAsJsonObject().get("StateMappings").getAsJsonArray().forEach(elem -> {
-                address.put(elem.getAsJsonObject().get("State").getAsString(), elem.getAsJsonObject().get("Mapping").getAsJsonArray());
+            addressMapping.put(add.getAsJsonObject().get("addressSpace").getAsString(), address);
+            add.getAsJsonObject().get("stateMappings").getAsJsonArray().forEach(elem -> {
+                address.put(elem.getAsJsonObject().get("state").getAsString(), elem.getAsJsonObject().get("mapping").getAsJsonArray());
             });
         });
     }
@@ -57,7 +57,7 @@ public abstract class LayoutComponent implements AVLDataElement {
         json.addProperty("type", type);
 
 
-        json.add("AddressSpaceMappings", getAddressMappingAsJsonArray());
+        json.add("addressSpaceMappings", getAddressMappingAsJsonArray());
 
         return json;
     }
@@ -65,16 +65,16 @@ public abstract class LayoutComponent implements AVLDataElement {
         JsonArray addresses = new JsonArray();
         addressMapping.forEach((key, value) -> {
             JsonObject addressSpace = new JsonObject();
-            addressSpace.addProperty("AddressSpace", key);
+            addressSpace.addProperty("addressSpace", key);
 
             JsonArray states = new JsonArray();
             value.forEach((key1, value1) -> {
                 JsonObject mapping = new JsonObject();
-                mapping.addProperty("State", key1);
-                mapping.add("Mapping", value1);
+                mapping.addProperty("state", key1);
+                mapping.add("mapping", value1);
                 states.add(mapping);
             });
-            addressSpace.add("StateMappings", states);
+            addressSpace.add("stateMappings", states);
             addresses.add(addressSpace);
         });
         return addresses;

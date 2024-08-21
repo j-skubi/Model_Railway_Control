@@ -19,7 +19,7 @@ public class Layout {
     private final AVLTree<LayoutComponent> components;
 
     public Layout(JsonObject json) throws CorruptedSaveFile {
-        idGenerator = new IDGenerator(Integer.MIN_VALUE);
+        idGenerator = new IDGenerator(json.get("idGenerator").getAsInt());
         components = new AVLTree<>();
 
         for (JsonElement elem : json.get("components").getAsJsonArray()) {

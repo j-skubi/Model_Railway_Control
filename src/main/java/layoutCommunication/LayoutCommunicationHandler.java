@@ -28,8 +28,8 @@ public class LayoutCommunicationHandler {
         public void run() {
             System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: SetState");
             command.get("addressMapping").getAsJsonArray().forEach(jsonElement -> {
-                if (addressSpaceHandlers.containsKey(jsonElement.getAsJsonObject().get("AddressSpace").getAsString())) {
-                    addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("AddressSpace").getAsString()).applyStateMappings(command);
+                if (addressSpaceHandlers.containsKey(jsonElement.getAsJsonObject().get("addressSpace").getAsString())) {
+                    addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).applyStateMappings(command);
                 }
             });
         }

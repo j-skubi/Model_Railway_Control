@@ -6,7 +6,8 @@ import { connect,send } from './WebSocket';
 import store from './Redux/store';
 import AddTurnoutDataForm, { Shutdown, Turnout } from './componentView/viewComponents';
 import { Provider, useSelector } from 'react-redux';
-import { viewComponent } from './Redux/dataReducer';
+import { ViewComponent } from './Redux/dataReducer';
+import ViewComponentsTable from './componentView/ViewComponentsTable';
 
 connect()
 
@@ -19,25 +20,15 @@ function CustomButton() {
   );
 }
 
-function selectViewComponents (state: {data: viewComponent[], control: any}) {
-  return state.data;
-}
+
 
 const dynamicText : string = "This is dynamic Text"
 
 function Menu() {
-  const data = useSelector(selectViewComponents);
-  const rows : React.ReactElement[] = [];
-
-  data.forEach(viewComponent => {
-    console.log(viewComponent);
-    rows.push(<Turnout key={viewComponent.viewID} viewID={viewComponent.viewID} name={viewComponent.name} state={viewComponent.state}></Turnout>);
-  });
-
 
   return (
     <div className="App">
-      {rows}
+      <ViewComponentsTable></ViewComponentsTable>
       <Shutdown></Shutdown>
     </div>
   );

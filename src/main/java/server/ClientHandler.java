@@ -36,6 +36,9 @@ public class ClientHandler implements Runnable {
         clients.forEach(Client::shutdown);
         t.interrupt();
     }
+    public void shutdown(int clientID) {
+        clients.stream().filter(client -> client.getId() == clientID).findFirst().ifPresent(client -> {clients.remove(client); client.shutdown();});
+    }
     @Override
     public void run() {
         System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Listening for incoming connections on port: " + socket.getLocalPort());
@@ -56,7 +59,7 @@ public class ClientHandler implements Runnable {
         messageHeader.addProperty("messageType",
                 switch (json.get("header").getAsJsonObject().get("commandType").getAsString()) {
                     case "requestViewAnswer" -> "RequestAnswer";
-                    case "notifyChange" -> "notifyChange";
+                    case "notifyChange", "addViewComponent" -> "notifyChange";
                     default -> "Ignore";
                 });
         message.add("header",messageHeader);

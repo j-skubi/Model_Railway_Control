@@ -87,6 +87,7 @@ public class Client implements Runnable{
                 } catch (IllegalStateException e) {
                     System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Received Illegal byte String: " + content);
                     System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + " " + clientID + "]", "Shutting down Client with ID: " + clientID);
+                    queue.add(new Command(10, clientShutdown()));
                     this.shutdown = true;
                 }
             }
@@ -132,6 +133,19 @@ public class Client implements Runnable{
         messageBody.add("body",commandBody);
 
         json.add("body",messageBody);
+        return json;
+    }
+    private JsonObject clientShutdown() {
+        JsonObject header = new JsonObject();
+        header.addProperty("from", "clientHandler");
+        header.addProperty("commandType", "shutdownClient");
+
+        JsonObject body = new JsonObject();
+        body.addProperty("clientID", clientID);
+
+        JsonObject json = new JsonObject();
+        json.add("header",header);
+        json.add("body",body);
         return json;
     }
 }
