@@ -15,7 +15,7 @@ class ComponentViewTest {
     AVLTree<LayoutComponent> model;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws CorruptedSaveFile {
         model = new AVLTree<>();
         model.insert(LayoutComponent.fromJson(JsonParser.parseString(JsonSaveFileStrings.TestTurnout).getAsJsonObject()));
 
