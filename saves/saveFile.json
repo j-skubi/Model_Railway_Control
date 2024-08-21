@@ -1,0 +1,119 @@
+{
+  "layoutData": {
+    "idGenerator": -2147483648,
+    "views": {
+      "COMPONENT-VIEW": {
+        "metadata": {
+          "type": "COMPONENT-VIEW"
+        },
+        "viewComponents": [
+          {
+            "viewID": 0,
+            "modelID": 1,
+            "name": "turn2",
+            "type": "TURNOUT-VIEW"
+          },
+          {
+            "viewID": 1,
+            "modelID": 0,
+            "name": "turn1",
+            "type": "TURNOUT-VIEW"
+          }
+        ]
+      }
+    },
+    "components": [
+      {
+        "id": 0,
+        "type": "TURNOUT",
+        "AddressSpaceMappings": [
+          {
+            "AddressSpace": "virtual",
+            "StateMappings": [
+              {
+                "State": "straight",
+                "Mapping": [
+                  {
+                    "Address": 16,
+                    "Mapping": 1
+                  }
+                ]
+              },
+              {
+                "State": "turnout",
+                "Mapping": [
+                  {
+                    "Address": 16,
+                    "Mapping": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "AddressSpace": "mock",
+            "StateMappings": [
+              {
+                "State": "straight",
+                "Mapping": [
+                  {
+                    "Address": 16,
+                    "Mapping": 1
+                  },
+                  {
+                    "Address": 17,
+                    "Mapping": 1
+                  }
+                ]
+              },
+              {
+                "State": "turnout",
+                "Mapping": [
+                  {
+                    "Address": 16,
+                    "Mapping": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "LegalStates": [
+          "straight",
+          "left"
+        ]
+      },
+      {
+        "id": 1,
+        "type": "TURNOUT",
+        "AddressSpaceMappings": [
+          {
+            "AddressSpace": "mock",
+            "StateMappings": [
+              {
+                "State": "straight",
+                "Mapping": []
+              },
+              {
+                "State": "left",
+                "Mapping": []
+              },
+              {
+                "State": "right",
+                "Mapping": []
+              }
+            ]
+          }
+        ],
+        "LegalStates": [
+          "left",
+          "straight",
+          "right"
+        ]
+      }
+    ]
+  },
+  "serverData": {
+    "port": 50745
+  }
+}

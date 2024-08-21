@@ -2,6 +2,7 @@ package layout.model;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import exceptions.CorruptedSaveFile;
 import utils.datastructures.AVLTree.AVLDataElement;
 import utils.datastructures.Command;
 import utils.datastructures.Event;
@@ -34,6 +35,10 @@ public abstract class LayoutComponent implements AVLDataElement {
                 address.put(elem.getAsJsonObject().get("State").getAsString(), elem.getAsJsonObject().get("Mapping").getAsJsonArray());
             });
         });
+    }
+
+    public String getType() {
+        return type;
     }
 
     protected void notifyListeners(Event event) {
@@ -86,10 +91,10 @@ public abstract class LayoutComponent implements AVLDataElement {
 
     public abstract void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
 
-    public static LayoutComponent fromJson(JsonObject json) {
+    public static LayoutComponent fromJson(JsonObject json) throws CorruptedSaveFile {
         return switch (json.get("type").getAsString()) {
             case "TURNOUT" -> new Turnout(json);
-            default -> null;
+            default -> throw new CorruptedSaveFile("Provided Json was not a legal LayoutComponent");
         };
     }
 }

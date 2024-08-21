@@ -5,7 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
+import layout.model.Turnout;
 import layout.views.View;
+import utils.IDGenerator;
 import utils.datastructures.AVLTree;
 
 public class ComponentView extends View {
@@ -40,6 +42,7 @@ public class ComponentView extends View {
 
         return json;
     }
+    @Override
     public JsonObject toClient() {
         isActive = true;
         JsonObject json = new JsonObject();
@@ -58,7 +61,22 @@ public class ComponentView extends View {
 
         return json;
     }
+    @Override
     public JsonObject changeState(int viewID) {
         return viewComponents.find(viewID).changeState();
+    }
+    @Override
+    public JsonObject addViewComponent(JsonObject component, AVLTree<LayoutComponent> model, IDGenerator generator) throws CorruptedSaveFile {
+        assert(component.get("modelID") == null);
+
+        component.addProperty("modelID", generator.generateID());
+
+        LayoutComponent layoutComponent = LayoutComponent.fromJson(component);
+        ViewComponent viewComponent = ViewComponent.fromLayoutComponent(layoutComponent, this, generator.generateID());
+
+        model.insert(layoutComponent);
+        viewComponents.insert(viewComponent);
+
+        return viewComponent.toClient();
     }
 }

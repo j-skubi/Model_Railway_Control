@@ -1,6 +1,7 @@
 package layout;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
@@ -21,9 +22,9 @@ public class Layout {
         idGenerator = new IDGenerator(Integer.MIN_VALUE);
         components = new AVLTree<>();
 
-        json.get("components").getAsJsonArray().forEach(elem -> {
+        for (JsonElement elem : json.get("components").getAsJsonArray()) {
             components.insert(LayoutComponent.fromJson(elem.getAsJsonObject()));
-        });
+        }
 
 
         viewHandler = new ViewHandler(json.get("views").getAsJsonObject(), components);
@@ -34,9 +35,7 @@ public class Layout {
         json.addProperty("idGenerator", idGenerator.save());
 
         JsonArray componentArray = new JsonArray();
-        components.forEach(component -> {
-            componentArray.add(component.save());
-        });
+        components.forEach(component -> componentArray.add(component.save()));
 
         json.add("views", viewHandler.save());
 
@@ -50,10 +49,13 @@ public class Layout {
     public ViewHandler.ChangeComponentStateClass changeComponentStateClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         return viewHandler.changeComponentStateClass(command,queue);
     }
+    public ViewHandler.AddViewComponentClass addViewComponentClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return viewHandler.addViewComponentClass(command, queue, components, idGenerator);
+    }
+
     public NotifyChangeClass notifyChangeClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         return new NotifyChangeClass(command, queue);
     }
-
     public class NotifyChangeClass implements Runnable{
         private final JsonObject command;
         private final PriorityBlockingQueueWrapper<Command> queue;

@@ -4,7 +4,7 @@ import { Button } from 'react-native'
 import './App.css';
 import { connect,send } from './WebSocket';
 import store from './Redux/store';
-import { Turnout } from './componentView/viewComponents';
+import { Shutdown, Turnout } from './componentView/viewComponents';
 import { Provider, useSelector } from 'react-redux';
 import { viewComponent } from './Redux/dataReducer';
 
@@ -38,6 +38,7 @@ function Menu() {
   return (
     <div className="App">
       {rows}
+      <Shutdown></Shutdown>
     </div>
   );
 }

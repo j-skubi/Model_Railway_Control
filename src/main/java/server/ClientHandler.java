@@ -31,6 +31,11 @@ public class ClientHandler implements Runnable {
         }
         t.start();
     }
+    public void shutdown() {
+        shutdown = true;
+        clients.forEach(Client::shutdown);
+        t.interrupt();
+    }
     @Override
     public void run() {
         System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Listening for incoming connections on port: " + socket.getLocalPort());
@@ -88,9 +93,7 @@ public class ClientHandler implements Runnable {
         public void run() {
             System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Sending Message to all active Viewers");
             JsonObject message = wrapJsonObject(json);
-            clients.forEach(client -> {
-                client.send(message);
-            });
+            clients.forEach(client -> client.send(message));
 
         }
     }

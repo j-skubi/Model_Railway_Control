@@ -5,7 +5,6 @@ import com.google.gson.JsonParser;
 import utils.Utils;
 import utils.datastructures.Command;
 import utils.datastructures.PriorityBlockingQueueWrapper;
-import utils.datastructures.WebSocketFrame;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +20,8 @@ import java.util.regex.Pattern;
 
 public class Client implements Runnable{
     private boolean shutdown;
+    private final Thread clientHandler;
+
 
     private final PriorityBlockingQueueWrapper<Command> queue;
     private final Socket client;
@@ -34,7 +35,7 @@ public class Client implements Runnable{
         this.client = socket;
         out = client.getOutputStream();
 
-        Thread clientHandler = new Thread(this, "ClientListener");
+        clientHandler = new Thread(this, "ClientListener");
         clientHandler.start();
     }
 
@@ -50,7 +51,10 @@ public class Client implements Runnable{
     public int getId() {
         return clientID;
     }
-
+    public void shutdown() {
+        shutdown = true;
+        clientHandler.interrupt();
+    }
     @Override
     public void run() {
         try {
@@ -98,8 +102,9 @@ public class Client implements Runnable{
             JsonObject header = json.get("header").getAsJsonObject();
             JsonObject body = json.get("body").getAsJsonObject();
             switch (header.get("messageType").getAsString()) {
-                case "Request" -> {queue.add(new Command(1000,body));}
+                case "Request" -> queue.add(new Command(1000,body));
                 case "ChangeState" -> queue.add(new Command(500,body));
+                case "ServerShutdown" -> queue.add(new Command(1, body));
                 case "Ignore" -> {}
             }
         } catch (NullPointerException e) {

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
 import layout.views.componentView.ComponentView;
+import utils.IDGenerator;
 import utils.Utils;
 import utils.datastructures.AVLTree;
 import utils.datastructures.Command;
@@ -21,14 +22,9 @@ public class ViewHandler {
 
     public JsonObject save() {
         JsonObject json = new JsonObject();
-        views.forEach((viewType, view) -> {
-            json.add(viewType, view.save());
-        });
+        views.forEach((viewType, view) -> json.add(viewType, view.save()));
         return json;
     }
-
-
-
 
     public RequestViewClass requestViewClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, int clientId) {
         return new RequestViewClass(command,queue, clientId);
@@ -94,6 +90,30 @@ public class ViewHandler {
             response.add("body", body);
 
             queue.add(new Command(200,response));
+        }
+    }
+    public AddViewComponentClass addViewComponentClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue, AVLTree<LayoutComponent> model, IDGenerator generator) {
+        return new AddViewComponentClass(command, queue, model, generator);
+    }
+    public class AddViewComponentClass implements Runnable {
+        private final PriorityBlockingQueueWrapper<Command> queue;
+        private final JsonObject command;
+        private final AVLTree<LayoutComponent> model;
+        private final IDGenerator generator;
+        public AddViewComponentClass(JsonObject json, PriorityBlockingQueueWrapper<Command> queue, AVLTree<LayoutComponent> model, IDGenerator generator) {
+            this.command = json;
+            this.queue = queue;
+            this.model = model;
+            this.generator = generator;
+        }
+
+        @Override
+        public void run() {
+            try {
+                queue.add(new Command(500, views.get(command.get("viewType").getAsString()).addViewComponent(command.get("component").getAsJsonObject(), model, generator)));
+            } catch (CorruptedSaveFile e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

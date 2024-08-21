@@ -12,24 +12,51 @@ export function Turnout(props: {viewID: number, name : string, state: string}) {
 
 
 function createChangeStateAction(viewID: number) : any{ 
-return {
-    type: "sendToServer",
-    payload: {
-    header : {
-        messageType: "ChangeState"
-    },
-    body : {
-        header : {
-            commandType: "changeState",
-            clientID: store.getState().control.clientID,
-            from: "webClient",
-            to: "model"
-        },
-        body : {
-            viewType: "COMPONENT-VIEW",
-            viewID: viewID
+    return {
+        type: "sendToServer",
+        payload: {
+            header : {
+                messageType: "ChangeState"
+            },
+            body : {
+                header : {
+                    commandType: "changeState",
+                    clientID: store.getState().control.clientID,
+                    from: "webClient",
+                    to: "model"
+                },
+                body : {
+                    viewType: "COMPONENT-VIEW",
+                    viewID: viewID
+                }
+            }
         }
     }
 }
+export function Shutdown() {
+    return (
+        <div>
+            <Button onPress={() => store.dispatch(shutdownCommand())} title='Shutdown'></Button>
+        </div>
+    )
 }
+
+function shutdownCommand() {
+    return {
+        type: "sendToServer",
+        payload: {
+            header : {
+                messageType: "ServerShutdown"
+            },
+            body : {
+                header : {
+                    commandType: "ServerShutdown",
+                    from: "webClient"
+                },
+                body : {
+
+                }
+            }
+        }
+    }
 }

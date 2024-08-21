@@ -59,10 +59,15 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement, EventList
     public abstract JsonObject changeState();
 
     public static ViewComponent fromJSON(ComponentView parent, JsonObject json, AVLTree<LayoutComponent> model) throws CorruptedSaveFile {
-
         return switch (json.get("type").getAsString()) {
             case "TURNOUT-VIEW" -> new TurnoutView(parent,json,model.find(json.get("modelID").getAsInt()));
             default -> throw new CorruptedSaveFile("No corresponding view for type " + json.get("type").getAsString() + "!");
+        };
+    }
+    public static ViewComponent fromLayoutComponent(LayoutComponent layoutComponent, ComponentView parent, int viewID) {
+        return switch (layoutComponent.getType()) {
+            case "TURNOUT" -> new TurnoutView(parent, viewID, layoutComponent);
+            default -> throw new RuntimeException("Unreachable");
         };
     }
 

@@ -1,4 +1,4 @@
-package utils.datastructures;
+package server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,8 +51,7 @@ public class WebSocketFrame {
                 }
             }
             in.read(payload,0,payload.length);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
     }
     public WebSocketFrame(byte[] payload) {
