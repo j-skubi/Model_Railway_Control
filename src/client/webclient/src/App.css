@@ -1,0 +1,15 @@
+/* Main container holding the entire layout */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    margin-left: 200px; /* Offset the content by the width of the MenuBar */
+  }
+  
+  /* Content container takes up the remaining space */
+  .content-container {
+    flex-grow: 1; /* This makes the content container fill the remaining space */
+    padding: 20px;
+    background-color: #f4f4f4; /* Example background color for contrast */
+    overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
+  }

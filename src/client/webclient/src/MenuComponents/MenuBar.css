@@ -1,0 +1,54 @@
+/* Menu bar container on the left */
+.menu-bar {
+    width: 200px; /* Fixed width for the menu bar */
+    background-color: #333; /* Example background color */
+    color: white; /* Example text color */
+    position: fixed; /* Fix the MenuBar to the left side of the viewport */
+    top: 0;
+    left: 0;
+    height: 100vh; /* Ensure it spans the full height of the viewport */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    box-sizing: border-box; /* Include padding and border in the element's width and height */
+  }
+  
+  /* Other internal styling of the MenuBar if any */
+  .menu-bar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .menu-bar ul li {
+    width: 100%;
+    text-align: center;
+    margin: 0; /* Reset margin */
+    padding: 10px 0; /* Add padding for spacing between items */
+  }
+  
+  .menu-bar ul li .menu-button {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 0; /* Adjust padding as needed */
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  /* Hover effect */
+  .menu-bar ul li .menu-button:hover {
+    background-color: #575757;
+  }
+  
+  /* Container for the toggle button */
+  .toggle-container {
+    margin-top: auto;
+    padding-bottom: 20px; /* Adjust or remove if not needed */
+  }

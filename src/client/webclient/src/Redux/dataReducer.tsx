@@ -1,29 +1,39 @@
-import { AddressSpaceMapping } from "../componentView/viewComponents";
+import { changeComponentState } from "../RequestBuilder";
+import { send } from "../WebSocket";
+import { action } from "../definitions/actions";
+import { dataState } from "../definitions/types";
 
-export type ViewComponent = {
-    type: string;
-    viewID: number;
-    name: string;
-    state: string;
-    addressSpaceMappings: AddressSpaceMapping;
+const initialState : dataState = {
+    visibleView : undefined,
+    viewData: {
+        viewComponents: []
+    }
 }
 
-const initialState : ViewComponent[] = []
 
-export default function dataReducer(state: ViewComponent[] = initialState, action : {type: string, payload: any}) : ViewComponent[] {
+export function dataReducer(state: dataState = initialState, action: action): dataState {
     switch (action.type) {
-
-        case "requestViewAnswer":
-            return action.payload.body.viewComponents
-        case "addViewComponent":
-            return [...state, action.payload]
-        case "notifyChange":
-            return state.map(viewComp =>
-                viewComp.viewID === action.payload.viewID
-                    ? { ...viewComp, state: action.payload.newState }
-                    : viewComp
-            );
-
+        case 'requestViewAnswer': {
+            return {visibleView: action.payload.metadata.type, viewData: {viewComponents: action.payload.viewComponents}}
+        }
+        case 'changeComponentState': {
+            send(changeComponentState(action.payload.viewType, action.payload.viewID));
+            return state;
+        }
+        case 'notifyChange': {
+            return {
+                ...state,
+                viewData: {
+                    ...state.viewData,
+                    viewComponents: state.viewData.viewComponents.map(viewComp =>
+                        viewComp.viewID === action.payload.viewID 
+                        ? {...viewComp, state: action.payload.newState}
+                        : viewComp
+                    )
+                }
+            }
+        }
     }
-    return state
+
+    return state;
 }

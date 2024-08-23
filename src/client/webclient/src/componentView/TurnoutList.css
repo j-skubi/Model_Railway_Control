@@ -1,0 +1,50 @@
+.turnout-table {
+    border-collapse: collapse;
+    margin: 20px 0; /* Add some margin around the table */
+    min-width: 300px; /* Set a minimum width for the table */
+    min-height: 100px; /* Set a minimum height for the table */
+    width: auto; /* Allow the table to adjust its width based on content */
+    background-color: #333; /* Dark background to match the MenuBar */
+    color: white; /* White text to match the MenuBar */
+    border-radius: 8px; /* Round the corners of the table */
+    overflow: hidden; /* Ensure the rounded corners are visible */
+}
+
+.turnout-table th, .turnout-table td {
+    padding: 12px 15px; /* Add padding for more spacing */
+    text-align: left;
+    font-size: 16px; /* Increase the font size for readability */
+    border-bottom: 1px solid #555; /* Subtle border for separation */
+}
+
+.turnout-table th {
+    background-color: #444; /* Slightly lighter than the main background */
+    color: #fff; /* White text for the header */
+    text-transform: uppercase; /* Uppercase text for the header */
+    letter-spacing: 1px; /* Add some letter spacing for the header text */
+    font-weight: bold; /* Make the header text bold */
+}
+
+.turnout-table tbody tr {
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth transitions */
+}
+
+.turnout-row {
+    cursor: pointer;
+}
+
+/* Hover effect */
+.turnout-row:hover {
+    background-color: #555; /* Slightly lighter grey on hover */
+}
+
+/* Active/Clicked effect */
+.turnout-row:active {
+    background-color: #666; /* Darker grey background on click */
+    transform: scale(0.98); /* Slightly shrink the row on click */
+}
+
+/* No border on the last row */
+.turnout-table tbody tr:last-of-type td {
+    border-bottom: none;
+}

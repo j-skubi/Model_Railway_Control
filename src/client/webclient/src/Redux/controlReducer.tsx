@@ -1,46 +1,27 @@
+import { requestView } from "../RequestBuilder";
 import { send } from "../WebSocket";
+import { action } from "../definitions/actions";
+import { controlState } from "../definitions/types";
 
-type ControlState = {
-    clientID: number | undefined
+
+
+const initalControlState: controlState = {
+    clientID: -1,
+    connectionStatus: "loading",
+    viewType: undefined,
+    editMode: false
 }
-const initialState = {
-    clientID: undefined
-}
 
 
-export default function controlReducer (controlState: ControlState = initialState, action: {type: string, payload: any}) : ControlState {
+export function controlReducer (state: controlState = initalControlState, action: action): controlState {
     switch (action.type) {
         case 'initialMessage': {
-            return {clientID: action.payload.body.clientID }
+            return {...state, clientID: action.payload.clientID, connectionStatus: "connected"}
         }
-        case 'addComponent': {
-            send(addComponentCommand(action.payload))
-            return controlState;
-        }
-        case 'sendToServer': {
-            send(action.payload);
-            return controlState;
-        }
-        default:
-            return controlState
-    }
-}
-
-function addComponentCommand(payload: any) {
-    return {
-        header: {
-            messageType: "Edit"
-        },
-        body: {
-            header: {
-                commandType: "addViewComponent",
-                from: "webClient",
-                to: "broadcast"
-            },
-            body: {
-                viewType: "COMPONENT-VIEW",
-                component: payload
-            }
+        case 'requestView': {
+            send(requestView(action.payload.viewType, action.payload.clientID));
+            return state;
         }
     }
+    return state;
 }

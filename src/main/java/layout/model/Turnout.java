@@ -50,11 +50,10 @@ public class Turnout extends LayoutComponent {
         if (!legalStates.contains(newState)) {
             throw new IllegalStateException("State " + newState + " is not included in legalStates");
         }
-
         json.addProperty("type", this.type);
         json.addProperty("modelID", this.id);
         json.addProperty("newState", newState);
-        json.add("addressMapping", this.getAddressMappingAsJsonArray());
+        json.add("addressSpaceMappings", this.getAddressMappingAsJsonArray());
 
         return json;
     }

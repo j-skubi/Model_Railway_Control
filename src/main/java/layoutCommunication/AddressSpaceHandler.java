@@ -1,21 +1,17 @@
 package layoutCommunication;
 
 import com.google.gson.JsonObject;
-import utils.datastructures.Command;
-import utils.datastructures.PriorityBlockingQueueWrapper;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AddressSpaceHandler {
     private final String type;
-    protected final PriorityBlockingQueueWrapper<Command> queue;
+    protected final LayoutCommunicationHandler layoutCommunicationHandler;
 
-    public AddressSpaceHandler(String type, PriorityBlockingQueueWrapper<Command> queue) {
+    public AddressSpaceHandler(String type, LayoutCommunicationHandler layoutCommunicationHandler) {
         this.type = type;
-        this.queue = queue;
+        this.layoutCommunicationHandler = layoutCommunicationHandler;
     }
 
-    public abstract void applyStateMappings(JsonObject command);
+    public abstract void send(int id, JsonObject command);
 
     @Override
     public boolean equals(Object o) {

@@ -117,7 +117,7 @@ public class Client implements Runnable{
         JsonObject json = new JsonObject();
 
         JsonObject messageHeader = new JsonObject();
-        messageHeader.addProperty("messageType", "controlData");
+        messageHeader.addProperty("messageType", "initialMessage");
         json.add("header",messageHeader);
 
         JsonObject messageBody = new JsonObject();

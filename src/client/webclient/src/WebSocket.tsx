@@ -3,7 +3,7 @@ import store from "./Redux/store";
 let ws: WebSocket | undefined = undefined
 
 export function connect () {
-    ws =  new WebSocket("ws://localhost:50745");
+    ws =  new WebSocket("ws://192.168.178.52:50745");
 
     ws.onopen = onOpen;
     ws.onmessage = onMessage;
@@ -22,12 +22,12 @@ function onMessage (messageEvent : MessageEvent) {
 
     const message = JSON.parse(messageEvent.data);
     switch (message.header.messageType) {
-        case "controlData": {
-            store.dispatch({type: message.body.header.commandType, payload: message.body});
+        case "initialMessage": {
+            store.dispatch({type: message.body.header.commandType, payload: message.body.body});
             break;
         }
         case "RequestAnswer": {
-            store.dispatch({type: message.body.header.commandType, payload: message.body});
+            store.dispatch({type: message.body.header.commandType, payload: message.body.body});
             break;
         }
         case "notifyChange": {
@@ -38,4 +38,5 @@ function onMessage (messageEvent : MessageEvent) {
 
     console.log(store.getState());
 }
+
 

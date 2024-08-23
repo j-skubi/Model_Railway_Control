@@ -11,6 +11,8 @@ import utils.Utils;
 import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.io.*;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.concurrent.PriorityBlockingQueue;
 import utils.datastructures.Command;
 
@@ -30,7 +32,7 @@ public class Server {
     private final LayoutCommunicationHandler layout;
     private final ClientHandler clientHandler;
 
-    public Server() throws CorruptedSaveFile, FileNotFoundException {
+    public Server() throws CorruptedSaveFile, FileNotFoundException, SocketException, UnknownHostException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(saveFilePath));
         JsonObject json = JsonParser.parseReader(bufferedReader).getAsJsonObject();
 
