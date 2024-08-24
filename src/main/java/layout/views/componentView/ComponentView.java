@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
+import layout.model.Lok;
 import layout.model.Turnout;
 import layout.views.View;
 import utils.IDGenerator;
@@ -64,6 +65,12 @@ public class ComponentView extends View {
     @Override
     public JsonObject changeState(int viewID) {
         return viewComponents.find(viewID).changeState();
+    }
+    @Override
+    public JsonObject setTrainSpeed(int viewID, int speed) {
+        ViewComponent lok = viewComponents.find(viewID);
+        assert(lok instanceof LokView);
+        return ((LokView) lok).setSpeed(speed);
     }
     @Override
     public JsonObject addViewComponent(JsonObject component, AVLTree<LayoutComponent> model, IDGenerator generator) throws CorruptedSaveFile {

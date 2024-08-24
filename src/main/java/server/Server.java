@@ -71,7 +71,7 @@ public class Server {
         switch (header.get("commandType").getAsString()) {
             case "requestViewAnswer" -> threadPool.submit(clientHandler.sendToClientClass(json));
             case "notifyChange", "addViewComponent" -> threadPool.submit(clientHandler.sendByActiveView(json));
-            case "setState" -> threadPool.submit(layout.setStateClass(body));
+            case "setState","setLokSpeed" -> threadPool.submit(layout.setStateClass(body));
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
         }
     }
@@ -93,6 +93,7 @@ public class Server {
             case "shutdown" -> this.shutdown = true;                                                                    //TODO: Interrupt all Running Threads;
             case "requestView" -> threadPool.submit(model.requestView(body,queueWrapper,header.get("clientID").getAsInt()));
             case "changeState" -> threadPool.submit(model.changeComponentStateClass(body, queueWrapper));
+            case "setLokSpeed" -> threadPool.submit(model.setTrainSpeedClass(body,queueWrapper));
             case "addViewComponent" -> threadPool.submit(model.addViewComponentClass(body, queueWrapper));
             case "ServerShutdown" -> shutdown();
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");

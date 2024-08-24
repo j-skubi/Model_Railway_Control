@@ -16,5 +16,7 @@ public abstract class View {
     public abstract JsonObject toClient();
     public abstract JsonObject save();
     public abstract JsonObject changeState(int viewID);
+    public abstract JsonObject setTrainSpeed(int viewID, int speed);
     public abstract JsonObject addViewComponent(JsonObject component, AVLTree<LayoutComponent> model, IDGenerator idGenerator) throws CorruptedSaveFile;
+
 }

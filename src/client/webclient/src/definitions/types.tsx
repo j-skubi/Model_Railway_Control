@@ -22,8 +22,15 @@ export type dataState = {
     }
 }
 
-export type viewComponent = turnoutComponent
+export type viewComponent = turnoutComponent | lokComponent
 
+export type lokComponent = {
+    type: "LOK"
+    viewID: number,
+    name: string,
+    direction: string,
+    speed: number,
+}
 export type basicViewComponent = {
     viewID: number,
     name: string,

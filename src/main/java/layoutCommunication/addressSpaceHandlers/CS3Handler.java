@@ -76,7 +76,9 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
     }
 
     private int generateHash() {
-        return 0xc37c;
+        int uid = 0x18FF;
+
+         return ((((0xff80 & uid) << 3) | (0x007f & uid) & 0xff70) | 0x0300);
         //return 6912;
     }
 
@@ -101,7 +103,7 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                                 packet.data[4] = (byte) mapping.getAsJsonObject().get("mapping").getAsInt();
                                 packet.data[5] = (byte) (mapping.getAsJsonObject().get("power") != null ? mapping.getAsJsonObject().get("power").getAsInt() : 1);
                                 if (mapping.getAsJsonObject().get("time") != null) {
-                                    packet.data[6] = (byte) (mapping.getAsJsonObject().get("time").getAsInt() << 8);
+                                    packet.data[6] = (byte) (mapping.getAsJsonObject().get("time").getAsInt() >> 8);
                                     packet.data[7] = (byte) (mapping.getAsJsonObject().get("time").getAsInt());
                                     packet.dlc = 8;
                                 } else {
@@ -112,6 +114,20 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                         }
                     });
                 }
+                case "setTrainSpeed" -> {
+                    CanDataPacket packet = new CanDataPacket();
+                    packet.hash = hash;
+                    packet.command = 0x04;
+                    packet.setUid(json.get("address").getAsInt());
+                    if (json.get("speed") != null) {
+                        packet.data[4] = (byte) (json.get("speed").getAsInt() >> 8);
+                        packet.data[5] = (byte) (json.get("speed").getAsInt());
+                        packet.dlc = 6;
+                    } else {
+                        packet.dlc = 4;
+                    }
+                    packets.add(packet);
+                }
             }
 
         }
@@ -119,11 +135,6 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
             packets.forEach(packet -> {
                 System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Sending CanBusMessage: " + packet);
                 send(packet.toBytes());
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             });
         }
         synchronized public boolean incomingMessage(CanDataPacket incoming) {

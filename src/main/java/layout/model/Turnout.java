@@ -11,7 +11,7 @@ import utils.datastructures.PriorityBlockingQueueWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Turnout extends LayoutComponent {
+public class Turnout extends MagnetArticle  {
     private final List<String> legalStates;
     private String state = "straight";
     public Turnout(int id) {

@@ -64,16 +64,29 @@ public class LayoutCommunicationHandler {
             this.command = command;
             tasks = new ArrayList<>();
 
-            command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
-                if (addressSpaceHandlers.containsKey(jsonElement.getAsJsonObject().get("addressSpace").getAsString())) {
-                    int id = IDCOUNTER++;
-                    tasks.add(id);
-                    JsonObject layoutCommand = command;
-                    layoutCommand.remove("addressSpaceMappings");
-                    layoutCommand.add("stateMappings", jsonElement.getAsJsonObject().get("stateMappings").getAsJsonArray());
-                    addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(id, layoutCommand);
+            switch (command.get("type").getAsString()) {
+                case "TURNOUT" -> {
+                    command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
+                        if (addressSpaceHandlers.containsKey(jsonElement.getAsJsonObject().get("addressSpace").getAsString())) {
+                            int id = IDCOUNTER++;
+                            tasks.add(id);
+                            JsonObject layoutCommand = command;
+                            layoutCommand.remove("addressSpaceMappings");
+                            layoutCommand.add("stateMappings", jsonElement.getAsJsonObject().get("stateMappings").getAsJsonArray());
+                            addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(id, layoutCommand);
+                        }
+                    });
                 }
-            });
+                case "setTrainSpeed" -> {
+                    command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
+                        JsonObject layoutCommand = command;
+                        layoutCommand.remove("addressSpaceMappings");
+                        layoutCommand.addProperty("address", jsonElement.getAsJsonObject().get("address").getAsInt());
+                        addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(IDCOUNTER++, layoutCommand);
+                    });
+                }
+            }
+
 
         }
         public boolean taskIsDone(int id) {
@@ -90,7 +103,11 @@ public class LayoutCommunicationHandler {
             JsonObject body = new JsonObject();
             body.addProperty("modelID", command.get("modelID").getAsInt());
             body.addProperty("type", command.get("type").getAsString());
-            body.addProperty("newState", command.get("newState").getAsString());
+
+            switch (command.get("type").getAsString()) {
+                case "TURNOUT" -> body.addProperty("newState", command.get("newState").getAsString());
+                case "setTrainSpeed" -> body.addProperty("speed", command.get("speed").getAsInt());
+            }
 
             JsonObject response = new JsonObject();
             response.add("header",header);

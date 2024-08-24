@@ -10,6 +10,7 @@ import MenuBar from './MenuComponents/MenuBar';
 import { connectionStatus } from './definitions/types';
 import TurnoutList from './componentView/TurnoutList';
 import { selectViewComponents, selectVisibleViewType } from './Redux/dataSelectors';
+import LokComponentList from './componentView/LokView';
 
 
 connect()
@@ -19,7 +20,7 @@ function Application() {
   const viewType: string | undefined = useSelector(selectVisibleViewType);
   var view = <></>;
   switch(viewType) {
-    case "COMPONENT-VIEW": {view = <TurnoutList></TurnoutList>;break;}
+    case "COMPONENT-VIEW": {view = <div><TurnoutList></TurnoutList><LokComponentList></LokComponentList></div>;break;}
     case undefined: {view = <></>}
   }
 

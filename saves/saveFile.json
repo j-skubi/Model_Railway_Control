@@ -10,21 +10,73 @@
           {
             "viewID": -2147483645,
             "modelID": -2147483646,
-            "name": "Turnout",
+            "name": "Turnout1",
+            "type": "TURNOUT-VIEW"
+          },
+          {
+            "viewID": 0,
+            "modelID": 0,
+            "name": "Turnout2",
             "type": "TURNOUT-VIEW"
           },
           {
             "viewID": 1,
             "modelID": 1,
-            "name": "DW1",
+            "name": "Turnout3",
             "type": "TURNOUT-VIEW"
+          },
+          {
+            "viewID": 2,
+            "modelID": 2,
+            "name": "Br 24",
+            "type": "LOK-VIEW"
           }
         ]
       }
     },
     "components": [
       {
+        "id": 2,
+        "address": 16393,
+        "type": "LOK",
+        "speed": 0,
+        "direction": "FORWARD"
+      },
+      {
         "id": -2147483646,
+        "type": "TURNOUT",
+        "addressSpaceMappings": [
+          {
+            "addressSpace": "cs3",
+            "stateMappings": [
+              {
+                "state": "Left",
+                "mapping": [
+                  {
+                    "address": 12288,
+                    "mapping": 0
+                  }
+                ]
+              },
+              {
+                "state": "Straight",
+                "mapping": [
+                  {
+                    "address": 12288,
+                    "mapping": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "legalStates": [
+          "Left",
+          "Straight"
+        ]
+      },
+      {
+        "id": 0,
         "type": "TURNOUT",
         "addressSpaceMappings": [
           {
@@ -64,40 +116,19 @@
             "addressSpace": "cs3",
             "stateMappings": [
               {
-                "state": "Straight",
-                "mapping": [
-                  {
-                    "address":12291,
-                    "mapping": 1
-                  },
-                  {
-                    "address": 12292,
-                    "mapping": 1
-                  }
-                ]
-              },
-              {
                 "state": "Left",
                 "mapping": [
                   {
-                    "address":12291,
-                    "mapping": 1
-                  },
-                  {
-                    "address": 12292,
+                    "address": 12290,
                     "mapping": 0
                   }
                 ]
               },
               {
-                "state": "Right",
+                "state": "Straight",
                 "mapping": [
                   {
-                    "address":12291,
-                    "mapping": 0
-                  },
-                  {
-                    "address": 12292,
+                    "address": 12290,
                     "mapping": 1
                   }
                 ]
@@ -107,7 +138,6 @@
         ],
         "legalStates": [
           "Left",
-          "Right",
           "Straight"
         ]
       }

@@ -75,7 +75,6 @@ public class ViewHandler {
         public void run() {
             System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: ChangeState");
 
-
             String viewType = command.get("viewType").getAsString();
 
             JsonObject header = new JsonObject();
@@ -128,5 +127,40 @@ public class ViewHandler {
             }
         }
     }
+    public SetTrainSpeedClass setTrainSpeedClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return new SetTrainSpeedClass(command, queue);
+    }
+    public class SetTrainSpeedClass implements Runnable{
+        private final JsonObject command;
+        private final PriorityBlockingQueueWrapper<Command> queue;
+        public SetTrainSpeedClass(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
+            this.command = json;
+            this.queue = queue;
+        }
 
+        @Override
+        public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: SetTrainSpeed");
+
+            if (command.get("speed").getAsInt() > 1000) {
+                System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Illegal Speed Value: " + command.get("speed").getAsInt());
+                return;
+            }
+
+            String viewType = command.get("viewType").getAsString();
+
+            JsonObject header = new JsonObject();
+            header.addProperty("from", "view");
+            header.addProperty("to", "cs3");
+            header.addProperty("commandType", "setLokSpeed");
+
+            JsonObject body = views.get(viewType).setTrainSpeed(command.get("viewID").getAsInt(), command.get("speed").getAsInt());
+
+            JsonObject response = new JsonObject();
+            response.add("header", header);
+            response.add("body", body);
+
+            queue.add(new Command(200,response));
+        }
+    }
 }

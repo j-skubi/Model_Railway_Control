@@ -38,3 +38,22 @@ export function changeComponentState(viewType: string, viewID: number) {
         }
     }
 }
+
+export function setTrainSpeed(viewType: string, viewID: number, speed: number) {
+    return {
+        header: {
+            messageType: "ChangeState"
+        },
+        body: {
+            header: {
+                commandType: "setLokSpeed",
+                from: "webClient"
+            },
+            body: {
+                viewType: viewType,
+                viewID: viewID,
+                speed: speed,
+            }
+        }
+    }
+}

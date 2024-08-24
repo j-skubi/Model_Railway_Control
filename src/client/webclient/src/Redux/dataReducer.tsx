@@ -1,4 +1,4 @@
-import { changeComponentState } from "../RequestBuilder";
+import { changeComponentState, setTrainSpeed } from "../RequestBuilder";
 import { send } from "../WebSocket";
 import { action } from "../definitions/actions";
 import { dataState } from "../definitions/types";
@@ -18,6 +18,10 @@ export function dataReducer(state: dataState = initialState, action: action): da
         }
         case 'changeComponentState': {
             send(changeComponentState(action.payload.viewType, action.payload.viewID));
+            return state;
+        }
+        case 'setTrainSpeed': {
+            send(setTrainSpeed(action.payload.viewType, action.payload.viewID, action.payload.speed))
             return state;
         }
         case 'notifyChange': {

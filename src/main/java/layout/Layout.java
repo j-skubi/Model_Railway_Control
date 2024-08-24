@@ -52,6 +52,9 @@ public class Layout {
     public ViewHandler.AddViewComponentClass addViewComponentClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         return viewHandler.addViewComponentClass(command, queue, components, idGenerator);
     }
+    public ViewHandler.SetTrainSpeedClass setTrainSpeedClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return viewHandler.setTrainSpeedClass(command, queue);
+    }
 
     public NotifyChangeClass notifyChangeClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         return new NotifyChangeClass(command, queue);

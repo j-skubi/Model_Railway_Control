@@ -1,0 +1,56 @@
+.lok-list {
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.lok-container {
+    background-color: #444;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lok-name {
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.lok-controls {
+    width: 100%;
+}
+
+.lok-direction {
+    margin-bottom: 20px;
+    cursor: pointer;
+    text-align: center;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.lok-direction:hover {
+    background-color: #555;
+}
+
+.lok-speed {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lok-speed label {
+    margin-bottom: 10px;
+}
+
+.lok-speed input[type="range"] {
+    width: 100%;
+}

@@ -39,6 +39,7 @@ public class TurnoutView extends ViewComponent {
         json.addProperty("state", turnout.getState());
         json.add("legalStates", turnout.getLegalStatesAsJsonArray());
 
+
         return json;
     }
 
@@ -61,7 +62,7 @@ public class TurnoutView extends ViewComponent {
 
     @Override
     public boolean doesConsume(Event.EventType eventType) {
-        return true;
+        return eventType.equals(Event.EventType.StateChange);
     }
 
     @Override

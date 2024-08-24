@@ -52,7 +52,6 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement, EventList
 
         json.addProperty("viewID", viewID);
         json.addProperty("name", name);
-        json.add("addressMapping", model.getAddressMappingAsJsonArray());
 
         return json;
     }
@@ -61,6 +60,7 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement, EventList
     public static ViewComponent fromJSON(ComponentView parent, JsonObject json, AVLTree<LayoutComponent> model) throws CorruptedSaveFile {
         return switch (json.get("type").getAsString()) {
             case "TURNOUT-VIEW" -> new TurnoutView(parent,json,model.find(json.get("modelID").getAsInt()));
+            case "LOK-VIEW" -> new LokView(parent,json,model.find(json.get("modelID").getAsInt()));
             default -> throw new CorruptedSaveFile("No corresponding view for type " + json.get("type").getAsString() + "!");
         };
     }
