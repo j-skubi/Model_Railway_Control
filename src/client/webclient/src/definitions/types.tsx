@@ -18,7 +18,8 @@ export type connectionStatus = "loading" | "connected"
 export type dataState = {
     visibleView: undefined | string
     viewData: {
-        viewComponents: viewComponent[]
+        turnoutData: turnoutComponent[]
+        lokData: lokComponent[]
     }
 }
 

@@ -27,7 +27,7 @@ class LayoutComponentTest {
         assertEquals(mockLayoutComponent.id, mockLayoutComponent.calculateKey());
     }
 
-    private static class MockLayoutComponent extends LayoutComponent {
+    private static class MockLayoutComponent extends MagnetArticle {
 
         public MockLayoutComponent(JsonObject json) {
             super(json);
@@ -42,52 +42,52 @@ class LayoutComponentTest {
             {
               "type": "MOCK",
               "id": 0,
-              "AddressSpaceMappings": [
+              "addressSpaceMappings": [
                 {
-                  "AddressSpace": "cs3",
-                  "StateMappings": [
+                  "addressSpace": "cs3",
+                  "stateMappings": [
                     {
-                      "State": "straight",
-                      "Mapping": [
+                      "state": "straight",
+                      "mapping": [
                         {
-                          "Address": 16,
-                          "Mapping": 1
+                          "address": 16,
+                          "mapping": 1
                         },
                         {
-                          "Address": 17,
-                          "Mapping": 1
+                          "address": 17,
+                          "mapping": 1
                         }
                       ]
                     },
                     {
-                      "State": "turnout",
-                      "Mapping": [
+                      "state": "turnout",
+                      "mapping": [
                         {
-                          "Address": 16,
-                          "Mapping": 1
+                          "address": 16,
+                          "mapping": 1
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "AddressSpace": "virtual",
-                  "StateMappings": [
+                  "addressSpace": "virtual",
+                  "stateMappings": [
                     {
-                      "State": "straight",
-                      "Mapping": [
+                      "state": "straight",
+                      "mapping": [
                         {
-                          "Address": 16,
-                          "Mapping": 1
+                          "address": 16,
+                          "mapping": 1
                         }
                       ]
                     },
                     {
-                      "State": "turnout",
-                      "Mapping": [
+                      "state": "turnout",
+                      "mapping": [
                         {
-                          "Address": 16,
-                          "Mapping": 1
+                          "address": 16,
+                          "mapping": 1
                         }
                       ]
                     }

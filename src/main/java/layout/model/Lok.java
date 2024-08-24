@@ -6,13 +6,13 @@ import utils.datastructures.Command;
 import utils.datastructures.PriorityBlockingQueueWrapper;
 
 public class Lok extends LayoutComponent {
-    private int address;
+    private JsonArray addressSpaceMappings;
     private int speed;
     private Direction direction;
 
     public Lok(JsonObject json) {
         super(json);
-        address = json.get("address").getAsInt();
+        addressSpaceMappings = json.get("addressSpaceMappings").getAsJsonArray();
         speed = json.get("speed").getAsInt();
         direction = Direction.valueOf(json.get("direction").getAsString());
     }
@@ -25,13 +25,6 @@ public class Lok extends LayoutComponent {
     public JsonObject setSpeed(int speed) {
         JsonObject json = new JsonObject();
         json.addProperty("type", "setTrainSpeed");
-
-        JsonArray addressSpaceMappings = new JsonArray();                           //TODO Add Multiple AddressSpaces to Lok
-        JsonObject cs3 = new JsonObject();
-        cs3.addProperty("address",address);
-        cs3.addProperty("addressSpace","cs3");
-        addressSpaceMappings.add(cs3);
-
         json.add("addressSpaceMappings",addressSpaceMappings);
         json.addProperty("speed", speed);
         return json;
@@ -40,7 +33,7 @@ public class Lok extends LayoutComponent {
     public JsonObject save() {
         JsonObject json = super.save();
 
-        json.addProperty("address", address);
+        json.add("addressSpaceMappings", addressSpaceMappings);
         json.addProperty("speed", speed);
         json.addProperty("direction", direction.name());
 

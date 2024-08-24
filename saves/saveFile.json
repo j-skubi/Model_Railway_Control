@@ -30,6 +30,12 @@
             "modelID": 2,
             "name": "Br 24",
             "type": "LOK-VIEW"
+          },
+          {
+            "viewID": 3,
+            "modelID": 3,
+            "name": "Freight-Train",
+            "type": "LOK-VIEW"
           }
         ]
       }
@@ -37,8 +43,25 @@
     "components": [
       {
         "id": 2,
-        "address": 16393,
         "type": "LOK",
+        "addressSpaceMappings": [
+          {
+            "addressSpace": "cs3",
+            "address": 16393
+          }
+        ],
+        "speed": 0,
+        "direction": "FORWARD"
+      },
+      {
+        "id": 3,
+        "type": "LOK",
+        "addressSpaceMappings": [
+          {
+            "addressSpace": "cs3",
+            "address": 16392
+          }
+        ],
         "speed": 0,
         "direction": "FORWARD"
       },

@@ -1,15 +1,12 @@
 import { useSelector } from "react-redux";
-import { turnoutComponent, viewComponent } from "../definitions/types";
-import { selectViewComponents } from "../Redux/dataSelectors";
+import { selectTurnoutComponents } from "../Redux/dataSelectors";
 import store from "../Redux/store";
 import './TurnoutList.css'
 
 
 
 const TurnoutList = () => {
-    const components = useSelector(selectViewComponents);
-    const turnoutComponents = components.filter(component => component.type === "TURNOUT") as turnoutComponent[];
-
+    const turnoutComponents = useSelector(selectTurnoutComponents);
 
     return (
         <table className="turnout-table">

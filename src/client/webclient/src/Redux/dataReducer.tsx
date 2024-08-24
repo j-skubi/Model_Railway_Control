@@ -1,12 +1,13 @@
 import { changeComponentState, setTrainSpeed } from "../RequestBuilder";
 import { send } from "../WebSocket";
 import { action } from "../definitions/actions";
-import { dataState } from "../definitions/types";
+import { dataState, viewComponent } from "../definitions/types";
 
 const initialState : dataState = {
     visibleView : undefined,
     viewData: {
-        viewComponents: []
+        turnoutData: [],
+        lokData: []
     }
 }
 
@@ -14,7 +15,10 @@ const initialState : dataState = {
 export function dataReducer(state: dataState = initialState, action: action): dataState {
     switch (action.type) {
         case 'requestViewAnswer': {
-            return {visibleView: action.payload.metadata.type, viewData: {viewComponents: action.payload.viewComponents}}
+            return {visibleView: action.payload.metadata.type, viewData: {
+                turnoutData: action.payload.viewComponents.filter((viewComp : viewComponent) => viewComp.type === "TURNOUT"),
+                lokData: action.payload.viewComponents.filter((viewComp: viewComponent) => viewComp.type === "LOK")
+            }}
         }
         case 'changeComponentState': {
             send(changeComponentState(action.payload.viewType, action.payload.viewID));
@@ -25,15 +29,32 @@ export function dataReducer(state: dataState = initialState, action: action): da
             return state;
         }
         case 'notifyChange': {
-            return {
-                ...state,
-                viewData: {
-                    ...state.viewData,
-                    viewComponents: state.viewData.viewComponents.map(viewComp =>
-                        viewComp.viewID === action.payload.viewID 
-                        ? {...viewComp, state: action.payload.newState}
-                        : viewComp
-                    )
+            switch (action.payload.type) {
+                case 'TURNOUT': {
+                    return {
+                        ...state,
+                        viewData: {
+                            ...state.viewData,
+                            turnoutData: state.viewData.turnoutData.map(viewComp =>
+                                viewComp.viewID === action.payload.viewID 
+                                ? {...viewComp, state: action.payload.newState}
+                                : viewComp
+                            )
+                        }
+                    }
+                }
+                case 'LOK': {
+                    return {
+                        ...state,
+                        viewData: {
+                            ...state.viewData,
+                            lokData: state.viewData.lokData.map(viewComp =>
+                                viewComp.viewID === action.payload.viewID 
+                                ? {...viewComp, state: action.payload.newState}
+                                : viewComp
+                            )
+                        }
+                    }
                 }
             }
         }

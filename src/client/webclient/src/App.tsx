@@ -9,7 +9,7 @@ import store from './Redux/store';
 import MenuBar from './MenuComponents/MenuBar';
 import { connectionStatus } from './definitions/types';
 import TurnoutList from './componentView/TurnoutList';
-import { selectViewComponents, selectVisibleViewType } from './Redux/dataSelectors';
+import { selectVisibleViewType } from './Redux/dataSelectors';
 import LokComponentList from './componentView/LokView';
 
 
