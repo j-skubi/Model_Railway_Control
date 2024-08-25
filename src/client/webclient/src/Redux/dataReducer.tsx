@@ -1,4 +1,4 @@
-import { changeComponentState, setTrainSpeed } from "../RequestBuilder";
+import { changeComponentState, setTrainSpeed, toggleLokFunction } from "../RequestBuilder";
 import { send } from "../WebSocket";
 import { action } from "../definitions/actions";
 import { dataState, viewComponent } from "../definitions/types";
@@ -26,6 +26,10 @@ export function dataReducer(state: dataState = initialState, action: action): da
         }
         case 'setTrainSpeed': {
             send(setTrainSpeed(action.payload.viewType, action.payload.viewID, action.payload.speed))
+            return state;
+        }
+        case 'toggleLokFunction': {
+            send(toggleLokFunction(action.payload.viewType, action.payload.viewID, action.payload.index))
             return state;
         }
         case 'notifyChange': {

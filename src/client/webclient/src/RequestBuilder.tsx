@@ -57,3 +57,21 @@ export function setTrainSpeed(viewType: string, viewID: number, speed: number) {
         }
     }
 }
+export function toggleLokFunction(viewType: string, viewID: number, index: number) {
+    return {
+        header: {
+            messageType: "ChangeState"
+        },
+        body: {
+            header: {
+                commandType: "activateLokFunction",
+                from: "webClient"
+            },
+            body: {
+                viewType: viewType,
+                viewID: viewID,
+                index: index
+            }
+        }
+    }
+}

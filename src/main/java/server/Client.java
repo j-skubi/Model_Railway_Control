@@ -67,7 +67,9 @@ public class Client implements Runnable{
 
             if (get.find()) {
                 Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(data);
-                match.find();
+                if (!match.find()) {
+                    return;
+                };
                 byte[] response = ("HTTP/1.1 101 Switching Protocols\r\n"
                         + "Connection: Upgrade\r\n"
                         + "Upgrade: websocket\r\n"

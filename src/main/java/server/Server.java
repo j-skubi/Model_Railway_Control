@@ -34,7 +34,7 @@ public class Server {
 
     public Server() throws CorruptedSaveFile, FileNotFoundException, SocketException, UnknownHostException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(saveFilePath));
-        JsonObject json = JsonParser.parseReader(bufferedReader).getAsJsonObject();
+        JsonObject json = JsonParser. parseReader(bufferedReader).getAsJsonObject();
 
         threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
         commandQueue = new PriorityBlockingQueue<>();
@@ -71,7 +71,7 @@ public class Server {
         switch (header.get("commandType").getAsString()) {
             case "requestViewAnswer" -> threadPool.submit(clientHandler.sendToClientClass(json));
             case "notifyChange", "addViewComponent" -> threadPool.submit(clientHandler.sendByActiveView(json));
-            case "setState","setLokSpeed" -> threadPool.submit(layout.setStateClass(body));
+            case "setState","setLokSpeed","activateLokFunction" -> threadPool.submit(layout.setStateClass(body));
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
         }
     }
@@ -95,6 +95,7 @@ public class Server {
             case "changeState" -> threadPool.submit(model.changeComponentStateClass(body, queueWrapper));
             case "setLokSpeed" -> threadPool.submit(model.setTrainSpeedClass(body,queueWrapper));
             case "addViewComponent" -> threadPool.submit(model.addViewComponentClass(body, queueWrapper));
+            case "activateLokFunction" -> threadPool.submit(model.activateLokFunctionClass(body,queueWrapper));
             case "ServerShutdown" -> shutdown();
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
 

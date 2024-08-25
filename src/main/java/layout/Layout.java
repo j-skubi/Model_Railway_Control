@@ -55,6 +55,9 @@ public class Layout {
     public ViewHandler.SetTrainSpeedClass setTrainSpeedClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         return viewHandler.setTrainSpeedClass(command, queue);
     }
+    public ViewHandler.ActivateLokFunctionClass activateLokFunctionClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return viewHandler.activateLokFunctionClass(command, queue);
+    }
 
     public NotifyChangeClass notifyChangeClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         return new NotifyChangeClass(command, queue);

@@ -163,4 +163,34 @@ public class ViewHandler {
             queue.add(new Command(200,response));
         }
     }
+    public ActivateLokFunctionClass activateLokFunctionClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return new ActivateLokFunctionClass(command,queue);
+    }
+    public class ActivateLokFunctionClass implements Runnable{
+        private final JsonObject command;
+        private final PriorityBlockingQueueWrapper<Command> queue;
+        public ActivateLokFunctionClass(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
+            this.command = json;
+            this.queue = queue;
+        }
+        @Override
+        public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Activate Function");
+
+            String viewType = command.get("viewType").getAsString();
+
+            JsonObject header = new JsonObject();
+            header.addProperty("from", "view");
+            header.addProperty("to", "cs3");
+            header.addProperty("commandType", "activateLokFunction");
+
+            JsonObject body = views.get(viewType).activateLokFunction(command.get("viewID").getAsInt(), command.get("index").getAsInt());
+
+            JsonObject response = new JsonObject();
+            response.add("header", header);
+            response.add("body", body);
+
+            queue.add(new Command(200,response));
+        }
+    }
 }

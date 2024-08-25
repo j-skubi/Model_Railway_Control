@@ -54,3 +54,35 @@
 .lok-speed input[type="range"] {
     width: 100%;
 }
+.lok-functions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.lok-function-button {
+    width: 50px;
+    height: 50px;
+    background-color: #555; /* Default background color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.lok-function-button:hover {
+    background-color: #777; /* Lighter color on hover */
+}
+
+/* Active state, takes precedence over hover */
+.lok-function-button.active {
+    background-color: #4CAF50; /* Highlight active buttons with green */
+}
+
+/* Ensure active state color is not overridden by hover */
+.lok-function-button.active:hover {
+    background-color: #4CAF50; /* Maintain green color when active and hovered */
+}

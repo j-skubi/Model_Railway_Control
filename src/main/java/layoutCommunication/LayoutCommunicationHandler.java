@@ -77,21 +77,15 @@ public class LayoutCommunicationHandler {
                         }
                     });
                 }
-                case "LOK" -> {
-                    switch (command.get("command").getAsString()) {
-                        case "setTrainSpeed", "setTrainDirection" -> {
-                            command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
-                                JsonObject layoutCommand = command;
-                                layoutCommand.remove("addressSpaceMappings");
-                                layoutCommand.addProperty("address", jsonElement.getAsJsonObject().get("address").getAsInt());
-                                addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(IDCOUNTER++, layoutCommand);
-                            });
-                        }
-                    }
-                }
+                case "LOK" ->
+                    command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
+                        JsonObject layoutCommand = command;
+                        layoutCommand.remove("addressSpaceMappings");
+                        layoutCommand.addProperty("address", jsonElement.getAsJsonObject().get("address").getAsInt());
+                        addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(IDCOUNTER++, layoutCommand);
+                    });
+
             }
-
-
         }
         public boolean taskIsDone(int id) {
             tasks.remove(Integer.valueOf(id));
@@ -115,6 +109,10 @@ public class LayoutCommunicationHandler {
                     switch (command.get("command").getAsString()) {
                         case "setTrainSpeed" -> body.addProperty("speed", command.get("speed").getAsInt());
                         case "setTrainDirection" -> body.addProperty("direction", command.get("direction").getAsString());
+                        case "activateLokFunction" -> {
+                            body.addProperty("value", command.get("isToggle").getAsBoolean() ? command.get("value").getAsInt() : 0);
+                            body.addProperty("index", command.get("index").getAsInt());
+                        }
                     }
                 }
             }

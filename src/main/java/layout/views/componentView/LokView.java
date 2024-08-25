@@ -1,10 +1,13 @@
 package layout.views.componentView;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import layout.model.LayoutComponent;
 import layout.model.Lok;
 import utils.datastructures.Command;
 import utils.datastructures.Event;
+
+import java.util.stream.Collector;
 
 public class LokView extends ViewComponent {
     private final Lok lok;
@@ -14,6 +17,9 @@ public class LokView extends ViewComponent {
     }
     public JsonObject setSpeed(int speed) {
         return lok.setSpeed(speed);
+    }
+    public JsonObject activateLokFunction(int index) {
+        return lok.activateLokFunction(index);
     }
     @Override
     public JsonObject save() {
@@ -31,7 +37,9 @@ public class LokView extends ViewComponent {
         json.addProperty("speed", lok.getSpeed());
         json.addProperty("direction", lok.getDirection());
 
-
+        JsonArray lokFunctions = new JsonArray();
+        lok.getLokFunctions().stream().map(Lok.LokFunction::toClient).forEach(lokFunctions::add);
+        json.add("lokFunctions", lokFunctions);
         return json;
     }
 

@@ -9,6 +9,9 @@ import utils.Utils;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 public class CS3Handler extends AddressSpaceHandler implements Runnable {
     private final InetAddress cs3Address;
@@ -82,10 +85,28 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
          return ((((0xff80 & uid) << 3) | (0x007f & uid) & 0xff70) | 0x0300);
         //return 6912;
     }
-
+    private class Response extends Thread {
+        private final List<CanDataPacket> response;
+        public Response (List<CanDataPacket> response) {
+            this.response = response;
+        }
+        public void activate() {
+            this.start();
+        }
+        @Override
+        public void run() {
+            try {
+                sleep(100);
+                response.forEach(p -> send(p.toBytes()));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
     private class CS3Task {
         private final int id;
         private final ArrayList<CanDataPacket> packets;
+        private Response response;
 
         public CS3Task(int id, JsonObject json) {
             this.id = id;
@@ -139,6 +160,32 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                                 packet.dlc = 4;
                             }
                         }
+                        case "activateLokFunction" -> {
+                            packet.command = 0x06;
+                            packet.data[4] = (byte) (json.get("index").getAsInt());
+                            if (json.get("value") != null) {
+                                packet.data[5] = (byte) (json.get("value").getAsInt());
+                            } else {
+                                packet.dlc = 5;
+                            }
+                            if (json.get("functionValue") != null) {
+                                packet.data[6] = (byte) (json.get("functionValue").getAsInt() >> 8);
+                                packet.data[7] = (byte) (json.get("functionValue").getAsInt());
+                                packet.dlc = 8;
+                            } else {
+                                packet.dlc = 6;
+                            }
+                            if (!json.get("isToggle").getAsBoolean()) {
+                                try {
+                                    CanDataPacket off = CanDataPacket.fromBytes(packet.toBytes());
+                                    off.data[5] = 0;
+                                    response = new Response(List.of(off));
+                                } catch (LayoutCommandException e) {
+                                    System.err.println("AHH");
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
                     }
                     packets.add(packet);
                 }
@@ -153,6 +200,9 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
         }
         synchronized public boolean incomingMessage(CanDataPacket incoming) {
             packets.removeIf(incoming::isResponseTo);
+            if (response != null) {
+                response.activate();
+            }
             return packets.isEmpty();
         }
 

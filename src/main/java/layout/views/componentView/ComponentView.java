@@ -5,8 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import layout.model.LayoutComponent;
-import layout.model.Lok;
-import layout.model.Turnout;
 import layout.views.View;
 import utils.IDGenerator;
 import utils.datastructures.AVLTree;
@@ -35,9 +33,7 @@ public class ComponentView extends View {
         json.add("metadata", metadata);
 
         JsonArray viewComponentArray = new JsonArray();
-        viewComponents.forEach(viewComponent -> {
-            viewComponentArray.add(viewComponent.save());
-        });
+        viewComponents.forEach(viewComponent -> viewComponentArray.add(viewComponent.save()));
 
         json.add("viewComponents", viewComponentArray);
 
@@ -55,9 +51,7 @@ public class ComponentView extends View {
         json.add("metadata",metadata);
 
         JsonArray viewComponentArray = new JsonArray();
-        viewComponents.forEach(viewComponent -> {
-            viewComponentArray.add(viewComponent.toClient());
-        });
+        viewComponents.forEach(viewComponent -> viewComponentArray.add(viewComponent.toClient()));
         json.add("viewComponents", viewComponentArray);
 
         return json;
@@ -71,6 +65,12 @@ public class ComponentView extends View {
         ViewComponent lok = viewComponents.find(viewID);
         assert(lok instanceof LokView);
         return ((LokView) lok).setSpeed(speed);
+    }
+    @Override
+    public JsonObject activateLokFunction(int viewID, int index) {
+        ViewComponent lok = viewComponents.find(viewID);
+        assert (lok instanceof LokView);
+        return ((LokView) lok).activateLokFunction(index);
     }
     @Override
     public JsonObject addViewComponent(JsonObject component, AVLTree<LayoutComponent> model, IDGenerator generator) throws CorruptedSaveFile {

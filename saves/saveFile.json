@@ -51,7 +51,39 @@
           }
         ],
         "speed": 0,
-        "direction": "FORWARD"
+        "direction": "FORWARD",
+        "lokFunctions": [
+          {
+            "index": 0,
+            "isToggle": true,
+            "hasInputField": false,
+            "name": "Light"
+          },
+          {
+            "index": 2,
+            "isToggle": true,
+            "hasInputField": false,
+            "name": "Sound"
+          },
+          {
+            "index": 3,
+            "isToggle": true,
+            "hasInputField": false,
+            "name": "Horn-Long"
+          },
+          {
+            "index": 4,
+            "isToggle": true,
+            "hasInputField": false,
+            "name": "Turtle"
+          },
+          {
+            "index": 7,
+            "isToggle": false,
+            "hasInputField": false,
+            "name": "Horn-Short"
+          }
+        ]
       },
       {
         "id": 3,
@@ -63,7 +95,9 @@
           }
         ],
         "speed": 0,
-        "direction": "FORWARD"
+        "direction": "FORWARD",
+        "lokFunctions": []
+
       },
       {
         "id": -2147483646,

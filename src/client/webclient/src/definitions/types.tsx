@@ -31,6 +31,14 @@ export type lokComponent = {
     name: string,
     direction: string,
     speed: number,
+    lokFunctions: lokFunction[]
+}
+export type lokFunction = {
+    index: number,
+    isToggle: boolean,
+    hasInputField: boolean,
+    isActive: boolean,
+    name: string,    
 }
 export type basicViewComponent = {
     viewID: number,
