@@ -54,7 +54,7 @@ public class TurnoutView extends ViewComponent {
         try {
             json = turnout.setState(nextState);
         } catch (IllegalStateException e) {
-            System.err.println("Exception in ChangeState in TurnoutView. Unreachable check Code!!");
+            System.err.println("Exception in ChangeState in TurnoutView. Unreachable: Verify Code!!");
             throw new RuntimeException(e);
         }
         return json;
@@ -75,6 +75,7 @@ public class TurnoutView extends ViewComponent {
 
         JsonObject body = event.additionalInfo();
         body.addProperty("viewID", this.viewID);
+        body.addProperty("type", "TURNOUT");
         JsonObject response = new JsonObject();
         response.add("header",header);
         response.add("body",body);

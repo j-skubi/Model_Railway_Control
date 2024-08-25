@@ -5,7 +5,7 @@ import './LokView.css'
 import { useState } from "react";
 import store from "../Redux/store";
 
-const Lok = (props: {component: lokComponent, index:number}) => {
+const Lok = (props: {component: lokComponent, key:number, index: number}) => {
     const [speedGoal, setSpeedGoal] = useState(0);
 
     const onSpeedGoalChange = (goal: number, viewID: number) => {
@@ -16,7 +16,7 @@ const Lok = (props: {component: lokComponent, index:number}) => {
         <div key={props.index} className="lok-container">
             <h2 className="lok-name">{props.component.name}</h2>
             <div className="lok-controls">
-                <div className="lok-direction" onClick={() => console.log("hi")}>
+                <div className="lok-direction" onClick={() => store.dispatch({type: 'changeComponentState', payload: {viewType: "COMPONENT-VIEW", viewID: props.component.viewID}})}>
                     Direction: {props.component.direction}
                 </div>
                 <div className="lok-speed">
@@ -40,7 +40,7 @@ const LokList = () => {
     return (
         <div className="lok-list">
             {lokComponents.map((component, index) => (
-                <Lok component={component} index={index}></Lok>
+                <Lok component={component} key={index} index={index}></Lok>
             ))}
         </div>
     );

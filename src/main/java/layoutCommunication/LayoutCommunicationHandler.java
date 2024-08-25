@@ -77,13 +77,17 @@ public class LayoutCommunicationHandler {
                         }
                     });
                 }
-                case "setTrainSpeed" -> {
-                    command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
-                        JsonObject layoutCommand = command;
-                        layoutCommand.remove("addressSpaceMappings");
-                        layoutCommand.addProperty("address", jsonElement.getAsJsonObject().get("address").getAsInt());
-                        addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(IDCOUNTER++, layoutCommand);
-                    });
+                case "LOK" -> {
+                    switch (command.get("command").getAsString()) {
+                        case "setTrainSpeed", "setTrainDirection" -> {
+                            command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
+                                JsonObject layoutCommand = command;
+                                layoutCommand.remove("addressSpaceMappings");
+                                layoutCommand.addProperty("address", jsonElement.getAsJsonObject().get("address").getAsInt());
+                                addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(IDCOUNTER++, layoutCommand);
+                            });
+                        }
+                    }
                 }
             }
 
@@ -106,7 +110,13 @@ public class LayoutCommunicationHandler {
 
             switch (command.get("type").getAsString()) {
                 case "TURNOUT" -> body.addProperty("newState", command.get("newState").getAsString());
-                case "setTrainSpeed" -> body.addProperty("speed", command.get("speed").getAsInt());
+                case "LOK" -> {
+                    body.addProperty("command", command.get("command").getAsString());
+                    switch (command.get("command").getAsString()) {
+                        case "setTrainSpeed" -> body.addProperty("speed", command.get("speed").getAsInt());
+                        case "setTrainDirection" -> body.addProperty("direction", command.get("direction").getAsString());
+                    }
+                }
             }
 
             JsonObject response = new JsonObject();

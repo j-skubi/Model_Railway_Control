@@ -43,8 +43,9 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                 inSocket.receive(packet);
                 handleIncoming(CanDataPacket.fromBytes(packet.getData()));
             } catch (IOException e) {
-                //TODO Error Handling
+                System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "IOException");
             } catch (LayoutCommandException e) {
+                System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "LayoutCommandException");
                 throw new RuntimeException(e);
             }
         }
@@ -99,7 +100,6 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                                 packet.hash = hash;
                                 packet.command = 0x0b;
                                 packet.setUid(mapping.getAsJsonObject().get("address").getAsInt());
-                                System.err.println(mapping.getAsJsonObject().get("address").getAsInt());
                                 packet.data[4] = (byte) mapping.getAsJsonObject().get("mapping").getAsInt();
                                 packet.data[5] = (byte) (mapping.getAsJsonObject().get("power") != null ? mapping.getAsJsonObject().get("power").getAsInt() : 1);
                                 if (mapping.getAsJsonObject().get("time") != null) {
@@ -114,17 +114,31 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                         }
                     });
                 }
-                case "setTrainSpeed" -> {
+                case "LOK" -> {
                     CanDataPacket packet = new CanDataPacket();
                     packet.hash = hash;
-                    packet.command = 0x04;
                     packet.setUid(json.get("address").getAsInt());
-                    if (json.get("speed") != null) {
-                        packet.data[4] = (byte) (json.get("speed").getAsInt() >> 8);
-                        packet.data[5] = (byte) (json.get("speed").getAsInt());
-                        packet.dlc = 6;
-                    } else {
-                        packet.dlc = 4;
+                    switch (json.get("command").getAsString()) {
+                        case "setTrainSpeed" -> {
+                            packet.command = 0x04;
+                            if (json.get("speed") != null) {
+                                packet.data[4] = (byte) (json.get("speed").getAsInt() >> 8);
+                                packet.data[5] = (byte) (json.get("speed").getAsInt());
+                                packet.dlc = 6;
+                            } else {
+                                packet.dlc = 4;
+                            }
+
+                        }
+                        case "setTrainDirection" -> {
+                            packet.command = 0x05;
+                            if (json.get("direction") != null) {
+                                packet.data[4] = (byte) (json.get("direction").getAsString().equals("FORWARD") ? 1 : 2);
+                                packet.dlc = 5;
+                            } else {
+                                packet.dlc = 4;
+                            }
+                        }
                     }
                     packets.add(packet);
                 }

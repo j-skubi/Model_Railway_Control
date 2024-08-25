@@ -44,17 +44,35 @@ export function dataReducer(state: dataState = initialState, action: action): da
                     }
                 }
                 case 'LOK': {
-                    return {
-                        ...state,
-                        viewData: {
-                            ...state.viewData,
-                            lokData: state.viewData.lokData.map(viewComp =>
-                                viewComp.viewID === action.payload.viewID 
-                                ? {...viewComp, state: action.payload.newState}
-                                : viewComp
-                            )
+                    switch (action.payload.command) {
+                        case 'setTrainSpeed': {
+                            return {
+                                ...state,
+                                viewData: {
+                                    ...state.viewData,
+                                    lokData: state.viewData.lokData.map(viewComp =>
+                                        viewComp.viewID === action.payload.viewID 
+                                        ? {...viewComp, speed: action.payload.newSpeed}
+                                        : viewComp
+                                    )
+                                }
+                            }
+                        }
+                        case 'setTrainDirection': {
+                            return {
+                                ...state,
+                                viewData: {
+                                    ...state.viewData,
+                                    lokData: state.viewData.lokData.map(viewComp =>
+                                        viewComp.viewID === action.payload.viewID 
+                                        ? {...viewComp, direction: action.payload.direction}
+                                        : viewComp
+                                    )
+                                }
+                            }
                         }
                     }
+                    return state;
                 }
             }
         }
