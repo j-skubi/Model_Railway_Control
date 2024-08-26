@@ -11,7 +11,7 @@ import utils.datastructures.PriorityBlockingQueueWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Turnout extends MagnetArticle  {
+public class Turnout extends LayoutComponent  {
     private final List<String> legalStates;
     private String state = "straight";
     public Turnout(int id) {
@@ -53,7 +53,7 @@ public class Turnout extends MagnetArticle  {
         json.addProperty("type", this.type);
         json.addProperty("modelID", this.id);
         json.addProperty("newState", newState);
-        json.add("addressSpaceMappings", this.getAddressMappingAsJsonArray());
+        json.add("addressSpaceMappings", addressSpaceMappings);
 
         return json;
     }

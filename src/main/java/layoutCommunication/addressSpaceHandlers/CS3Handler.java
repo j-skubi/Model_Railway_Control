@@ -11,13 +11,11 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-
 public class CS3Handler extends AddressSpaceHandler implements Runnable {
     private final InetAddress cs3Address;
     private final DatagramSocket outSocket;
     private final DatagramSocket inSocket;
-    private final Thread reveiver;
+    private final Thread receiver;
 
     private final ArrayList<CS3Task> activeTasks;
 
@@ -29,13 +27,13 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
         cs3Address = InetAddress.getByName(cs3Ip);
         outSocket = new DatagramSocket();
         inSocket = new DatagramSocket(15730, InetAddress.getLocalHost());
-        reveiver = new Thread(this, "cs3PortListener");
+        receiver = new Thread(this, "cs3PortListener");
 
         activeTasks = new ArrayList<>();
 
         hash = generateHash();
 
-        reveiver.start();
+        receiver.start();
     }
     @Override
     public void run() {
@@ -113,32 +111,24 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
             packets = new ArrayList<>();
 
             switch (json.get("type").getAsString()) {
-                case "TURNOUT" -> {
-                    json.get("stateMappings").getAsJsonArray().forEach(state -> {
-                        if (state.getAsJsonObject().get("state").getAsString().equals(json.get("newState").getAsString())) {
-                            state.getAsJsonObject().get("mapping").getAsJsonArray().forEach(mapping -> {
+                case "TURNOUT" -> json.get("cs3").getAsJsonObject().entrySet().forEach(state -> {
+                        if (state.getKey().equals(json.get("newState").getAsString())) {
+                            state.getValue().getAsJsonObject().entrySet().forEach(address -> {
                                 CanDataPacket packet = new CanDataPacket();
                                 packet.hash = hash;
                                 packet.command = 0x0b;
-                                packet.setUid(mapping.getAsJsonObject().get("address").getAsInt());
-                                packet.data[4] = (byte) mapping.getAsJsonObject().get("mapping").getAsInt();
-                                packet.data[5] = (byte) (mapping.getAsJsonObject().get("power") != null ? mapping.getAsJsonObject().get("power").getAsInt() : 1);
-                                if (mapping.getAsJsonObject().get("time") != null) {
-                                    packet.data[6] = (byte) (mapping.getAsJsonObject().get("time").getAsInt() >> 8);
-                                    packet.data[7] = (byte) (mapping.getAsJsonObject().get("time").getAsInt());
-                                    packet.dlc = 8;
-                                } else {
-                                    packet.dlc = 6;
-                                }
+                                packet.setUid(Integer.parseInt(address.getKey()));
+                                packet.data[4] = (byte) address.getValue().getAsInt();
+                                packet.data[5] = (byte) 1;
+                                packet.dlc = 6;
                                 packets.add(packet);
                             });
                         }
                     });
-                }
                 case "LOK" -> {
                     CanDataPacket packet = new CanDataPacket();
                     packet.hash = hash;
-                    packet.setUid(json.get("address").getAsInt());
+                    packet.setUid(json.get("cs3").getAsInt());
                     switch (json.get("command").getAsString()) {
                         case "setTrainSpeed" -> {
                             packet.command = 0x04;
@@ -181,7 +171,6 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                                     off.data[5] = 0;
                                     response = new Response(List.of(off));
                                 } catch (LayoutCommandException e) {
-                                    System.err.println("AHH");
                                     throw new RuntimeException(e);
                                 }
                             }
@@ -225,7 +214,7 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
             bytes[0] = (byte) (prio << 1);
             bytes[0] = (byte) (bytes[0] | command >>> 7);
             bytes[1] = (byte) (command << 1);
-            bytes[1] = (byte) (bytes[1] | (byte) response);
+            bytes[1] = (byte) (bytes[1] | response);
             bytes[2] = (byte) (hash >> 8);
             bytes[3] = (byte) hash;
             bytes[4] = dlc;

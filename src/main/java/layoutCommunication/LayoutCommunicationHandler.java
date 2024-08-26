@@ -64,28 +64,17 @@ public class LayoutCommunicationHandler {
             this.command = command;
             tasks = new ArrayList<>();
 
-            switch (command.get("type").getAsString()) {
-                case "TURNOUT" -> {
-                    command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
-                        if (addressSpaceHandlers.containsKey(jsonElement.getAsJsonObject().get("addressSpace").getAsString())) {
-                            int id = IDCOUNTER++;
-                            tasks.add(id);
-                            JsonObject layoutCommand = command;
-                            layoutCommand.remove("addressSpaceMappings");
-                            layoutCommand.add("stateMappings", jsonElement.getAsJsonObject().get("stateMappings").getAsJsonArray());
-                            addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(id, layoutCommand);
-                        }
-                    });
+            command.get("addressSpaceMappings").getAsJsonObject().entrySet().forEach(entry -> {
+                if (addressSpaceHandlers.containsKey(entry.getKey())) {
+                    int id = IDCOUNTER++;
+                    tasks.add(id);
+                    JsonObject layoutCommand;
+                    layoutCommand = command;
+                    layoutCommand.remove("addressSpaceMappings");
+                    layoutCommand.add(entry.getKey(), entry.getValue());
+                    addressSpaceHandlers.get(entry.getKey()).send(id, layoutCommand);
                 }
-                case "LOK" ->
-                    command.get("addressSpaceMappings").getAsJsonArray().forEach(jsonElement -> {
-                        JsonObject layoutCommand = command;
-                        layoutCommand.remove("addressSpaceMappings");
-                        layoutCommand.addProperty("address", jsonElement.getAsJsonObject().get("address").getAsInt());
-                        addressSpaceHandlers.get(jsonElement.getAsJsonObject().get("addressSpace").getAsString()).send(IDCOUNTER++, layoutCommand);
-                    });
-
-            }
+            });
         }
         public boolean taskIsDone(int id) {
             tasks.remove(Integer.valueOf(id));

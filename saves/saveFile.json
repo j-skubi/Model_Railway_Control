@@ -44,12 +44,9 @@
       {
         "id": 2,
         "type": "LOK",
-        "addressSpaceMappings": [
-          {
-            "addressSpace": "cs3",
-            "address": 16393
-          }
-        ],
+        "addressSpaceMappings": {
+          "cs3": 16393
+        },
         "speed": 0,
         "direction": "FORWARD",
         "lokFunctions": [
@@ -88,12 +85,11 @@
       {
         "id": 3,
         "type": "LOK",
-        "addressSpaceMappings": [
-          {
-            "addressSpace": "cs3",
+        "addressSpaceMappings": {
+          "cs3": {
             "address": 16392
           }
-        ],
+      },
         "speed": 0,
         "direction": "FORWARD",
         "lokFunctions": []
@@ -102,31 +98,16 @@
       {
         "id": -2147483646,
         "type": "TURNOUT",
-        "addressSpaceMappings": [
-          {
-            "addressSpace": "cs3",
-            "stateMappings": [
-              {
-                "state": "Left",
-                "mapping": [
-                  {
-                    "address": 12288,
-                    "mapping": 0
-                  }
-                ]
-              },
-              {
-                "state": "Straight",
-                "mapping": [
-                  {
-                    "address": 12288,
-                    "mapping": 1
-                  }
-                ]
-              }
-            ]
+        "addressSpaceMappings": {
+          "cs3": {
+            "Left": {
+              "12288": 0
+            },
+            "Straight": {
+              "12288": 1
+            }
           }
-        ],
+        },
         "legalStates": [
           "Left",
           "Straight"
@@ -135,31 +116,16 @@
       {
         "id": 0,
         "type": "TURNOUT",
-        "addressSpaceMappings": [
-          {
-            "addressSpace": "cs3",
-            "stateMappings": [
-              {
-                "state": "Left",
-                "mapping": [
-                  {
-                    "address": 12289,
-                    "mapping": 0
-                  }
-                ]
-              },
-              {
-                "state": "Straight",
-                "mapping": [
-                  {
-                    "address": 12289,
-                    "mapping": 1
-                  }
-                ]
-              }
-            ]
+        "addressSpaceMappings": {
+          "cs3": {
+            "Left": {
+              "12289": 0
+            },
+            "Straight": {
+              "12289": 1
+            }
           }
-        ],
+        },
         "legalStates": [
           "Left",
           "Straight"
@@ -168,31 +134,16 @@
       {
         "id": 1,
         "type": "TURNOUT",
-        "addressSpaceMappings": [
-          {
-            "addressSpace": "cs3",
-            "stateMappings": [
-              {
-                "state": "Left",
-                "mapping": [
-                  {
-                    "address": 12290,
-                    "mapping": 0
-                  }
-                ]
-              },
-              {
-                "state": "Straight",
-                "mapping": [
-                  {
-                    "address": 12290,
-                    "mapping": 1
-                  }
-                ]
-              }
-            ]
+        "addressSpaceMappings": {
+          "cs3": {
+            "Left": {
+              "12290": 0
+            },
+            "Straight": {
+              "12290": 1
+            }
           }
-        ],
+        },
         "legalStates": [
           "Left",
           "Straight"

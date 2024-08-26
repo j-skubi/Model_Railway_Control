@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LayoutComponent implements AVLDataElement {
+    protected final JsonObject addressSpaceMappings;
     protected final String type;
     protected final int id;
     protected final List<EventListener> listeners;
@@ -21,9 +22,13 @@ public abstract class LayoutComponent implements AVLDataElement {
         this.id = id;
         this.type = type;
         this.listeners = new ArrayList<>();
+        this.addressSpaceMappings = new JsonObject();
     }
     public LayoutComponent(JsonObject json) {
-        this(json.get("id").getAsInt(), json.get("type").getAsString());
+        this.id = json.get("id").getAsInt();
+        this.type = json.get("type").getAsString();
+        addressSpaceMappings = json.get("addressSpaceMappings").getAsJsonObject();
+        this.listeners = new ArrayList<>();
     }
 
     public String getType() {
@@ -44,10 +49,9 @@ public abstract class LayoutComponent implements AVLDataElement {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
         json.addProperty("type", type);
-
+        json.add("addressSpaceMappings",addressSpaceMappings);
         return json;
     }
-
 
     public abstract void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
 

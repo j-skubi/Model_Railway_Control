@@ -8,10 +8,8 @@ import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class Lok extends LayoutComponent {
-    private JsonArray addressSpaceMappings;
     private int speed;
     private Direction direction;
     private final HashMap<Integer,LokFunction> lokFunctions;
@@ -24,7 +22,6 @@ public class Lok extends LayoutComponent {
         json.get("lokFunctions").getAsJsonArray().forEach(function -> {
             lokFunctions.put(function.getAsJsonObject().get("index").getAsInt(), new LokFunction(function.getAsJsonObject()));
         });
-        addressSpaceMappings = json.get("addressSpaceMappings").getAsJsonArray();
         speed = json.get("speed").getAsInt();
         direction = Direction.valueOf(json.get("direction").getAsString());
     }
@@ -63,6 +60,7 @@ public class Lok extends LayoutComponent {
         json.addProperty("modelID", id);
         return json;
     }
+
     @Override
     public JsonObject save() {
         JsonObject json = super.save();
@@ -70,13 +68,11 @@ public class Lok extends LayoutComponent {
         JsonArray lokFunctionJson = new JsonArray();
         lokFunctions.forEach((index,function) -> lokFunctionJson.add(function.save()));
         json.add("lokFunctions", lokFunctionJson);
-        json.add("addressSpaceMappings", addressSpaceMappings);
         json.addProperty("speed", speed);
         json.addProperty("direction", direction.name());
 
         return json;
     }
-
     @Override
     public void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         switch (command.get("command").getAsString()) {
