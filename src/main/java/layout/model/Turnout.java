@@ -10,10 +10,11 @@ import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Turnout extends LayoutComponent  {
     private final List<String> legalStates;
-    private String state = "straight";
+    private String state = "Straight";
     public Turnout(int id) {
         super(id, "TURNOUT");
         this.legalStates = new ArrayList<>();
@@ -58,17 +59,45 @@ public class Turnout extends LayoutComponent  {
         return json;
     }
     @Override
-    public void notifyChange(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
+    public boolean hasAddress(String addressSpace, int address) {
+        return addressSpaceMappings.get(addressSpace).getAsJsonObject().entrySet().stream()
+                .flatMap(stateMap -> stateMap.getValue().getAsJsonObject().keySet().stream())
+                .anyMatch(key -> Integer.parseInt(key) == address);
+    }
+    @Override
+    synchronized public void applyStandaloneMessage(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
+        if (json.get("power").getAsInt() == 0) {
+            return;
+        }
+        JsonObject currentState = addressSpaceMappings.get(json.get("addressSpace").getAsString()).getAsJsonObject().get(state).getAsJsonObject().deepCopy();
+        currentState.remove(json.get("address").getAsString());
+        currentState.addProperty(json.get("address").getAsString(), json.get("state").getAsInt());
+        addressSpaceMappings.get(json.get("addressSpace").getAsString()).getAsJsonObject().entrySet().forEach(entry -> {    //entry = (state: string -> addressMapping: jsonObject)
+            if (entry.getValue().getAsJsonObject().entrySet().stream().allMatch(addressStatePair ->                         //addressStatePair = (address: int -> state: int)
+                currentState.get(addressStatePair.getKey()).getAsInt() == addressStatePair.getValue().getAsInt()
+            )) {
+                JsonObject notify = new JsonObject();
+                notify.addProperty("type", type);
+                notify.addProperty("newState", entry.getKey());
+                notifyChange(notify, queue);
+            }
+        });
+    }
+    @Override
+    synchronized public void notifyChange(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
         if (!json.get("type").getAsString().equals(type)) {
             System.err.println("Wrong TYPE");
             return;
         }
+        if (state.equals(json.get("newState").getAsString())) {
+            return;
+        }
         if (legalStates.contains(json.get("newState").getAsString())) {
+            System.err.println(json.get("newState").getAsString());
             JsonObject additionalInfo = new JsonObject();
             additionalInfo.addProperty("oldState", state);
             state = json.get("newState").getAsString();
             additionalInfo.addProperty("newState", state);
-
             this.notifyListeners(new Event(Event.EventType.StateChange, additionalInfo, queue));
             System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Notified All Listeners");
         }

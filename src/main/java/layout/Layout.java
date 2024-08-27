@@ -25,8 +25,6 @@ public class Layout {
         for (JsonElement elem : json.get("components").getAsJsonArray()) {
             components.insert(LayoutComponent.fromJson(elem.getAsJsonObject()));
         }
-
-
         viewHandler = new ViewHandler(json.get("views").getAsJsonObject(), components);
     }
 
@@ -76,6 +74,23 @@ public class Layout {
             component.notifyChange(command, queue);
         }
     }
-
-
+    public ApplyStandaloneMessageClass applyStandaloneMessageClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+        return new ApplyStandaloneMessageClass(command,queue);
+    }
+    public class ApplyStandaloneMessageClass implements Runnable{
+        private final JsonObject command;
+        private final PriorityBlockingQueueWrapper<Command> queue;
+        public ApplyStandaloneMessageClass(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
+            this.command = command;
+            this.queue = queue;
+        }
+        @Override
+        public void run() {
+            components.forEach(component -> {
+                if (component.hasAddress(command.get("addressSpace").getAsString(), command.get("address").getAsInt())) {
+                    component.applyStandaloneMessage(command, queue);
+                }
+            });
+        }
+    }
 }

@@ -81,6 +81,7 @@ public class Server {
 
         switch (header.get("commandType").getAsString()) {
             case "notifyChange" -> threadPool.submit(model.notifyChangeClass(body,queueWrapper));
+            case "standaloneMessage" -> threadPool.submit(model.applyStandaloneMessageClass(body, queueWrapper));
             case "Error" -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Error in LayoutCommunication");
             default -> System.err.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "CommandType not known");
         }

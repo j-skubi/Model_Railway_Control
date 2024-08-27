@@ -30,11 +30,9 @@ public abstract class LayoutComponent implements AVLDataElement {
         addressSpaceMappings = json.get("addressSpaceMappings").getAsJsonObject();
         this.listeners = new ArrayList<>();
     }
-
     public String getType() {
         return type;
     }
-
     protected void notifyListeners(Event event) {
         listeners.stream().filter(s -> s.doesConsume(event.eventType())).forEach(e -> e.apply(event));
     }
@@ -54,6 +52,8 @@ public abstract class LayoutComponent implements AVLDataElement {
     }
 
     public abstract void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
+    public abstract boolean hasAddress(String addressSpace, int address);
+    public abstract void applyStandaloneMessage(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
 
     public static LayoutComponent fromJson(JsonObject json) throws CorruptedSaveFile {
         return switch (json.get("type").getAsString()) {

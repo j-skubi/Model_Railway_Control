@@ -37,7 +37,15 @@ public class LayoutCommunicationHandler {
         }
         activeTasks.removeAll(toBeRemoved);
     }
-
+    public void standaloneMessage(JsonObject body) {
+        JsonObject header = new JsonObject();
+        header.addProperty("from", "layout");
+        header.addProperty("commandType", "standaloneMessage");
+        JsonObject response = new JsonObject();
+        response.add("header",header);
+        response.add("body",body);
+        queue.add(new Command(500, response));
+    }
     public SetStateClass setStateClass(JsonObject command) {
         return new SetStateClass(command);
     }

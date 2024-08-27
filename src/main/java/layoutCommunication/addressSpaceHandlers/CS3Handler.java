@@ -20,6 +20,7 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
     private final ArrayList<CS3Task> activeTasks;
 
     private boolean shutdown = false;
+    private CanDataPacket last = new CanDataPacket();
     private final int hash;
 
     public CS3Handler(String cs3Ip, LayoutCommunicationHandler layoutCommunicationHandler) throws UnknownHostException, SocketException {
@@ -51,14 +52,60 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
             }
         }
     }
+    private boolean filterDoubleMessages(CanDataPacket incoming) {
+        boolean ret = incoming.equals(last);
+        last = incoming;
+        return ret;
+    }
     private void handleIncoming(CanDataPacket incoming) {
         System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Received CanBusMessage: " + incoming);
+        if (incoming.response == 0) {
+            return;
+        }
+        if (filterDoubleMessages(incoming)) {
+            return;
+        }
+        boolean wasUsed = false;
+        List<CS3Task> toBeRemoved = new ArrayList<>();
         for (CS3Task task : activeTasks) {
             if (task.incomingMessage(incoming)) {
-                activeTasks.remove(task);
-                layoutCommunicationHandler.taskIsDone(task.id);
-                break;
+                wasUsed = true;
+                if (task.isDone()) {
+                    toBeRemoved.add(task);
+                    layoutCommunicationHandler.taskIsDone(task.id);
+                }
             }
+        }
+        activeTasks.removeAll(toBeRemoved);
+        if (!wasUsed) {
+            JsonObject body = new JsonObject();
+            body.addProperty("addressSpace", "cs3");
+            body.addProperty("address", incoming.getUid());
+            switch (incoming.command) {
+                case 0x0b -> {
+                    body.addProperty("state", incoming.data[4]);
+                    body.addProperty("power", incoming.data[5]);
+                }
+                case 0x11 -> {
+                    body.addProperty("oldState", incoming.data[4]);
+                    body.addProperty("newState", incoming.data[5]);
+                }
+                case 0x04 -> {
+                    body.addProperty("command", "setTrainSpeed");
+                    body.addProperty("speed", ((incoming.data[4] & 0xff) << 8) | (incoming.data[5] & 0xff));
+                }
+                case 0x05 -> {
+                    body.addProperty("command", "setTrainDirection");
+                    body.addProperty("direction", incoming.data[4] == 1 ? "FORWARD": "BACKWARDS");
+                }
+                case 0x06 -> {
+                    body.addProperty("command", "activateLokFunction");
+                    body.addProperty("index", incoming.data[4]);
+                    body.addProperty("value", incoming.data[5]);
+                }
+                default -> {return;}
+            }
+            layoutCommunicationHandler.standaloneMessage(body);
         }
     }
 
@@ -112,19 +159,19 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
 
             switch (json.get("type").getAsString()) {
                 case "TURNOUT" -> json.get("cs3").getAsJsonObject().entrySet().forEach(state -> {
-                        if (state.getKey().equals(json.get("newState").getAsString())) {
-                            state.getValue().getAsJsonObject().entrySet().forEach(address -> {
-                                CanDataPacket packet = new CanDataPacket();
-                                packet.hash = hash;
-                                packet.command = 0x0b;
-                                packet.setUid(Integer.parseInt(address.getKey()));
-                                packet.data[4] = (byte) address.getValue().getAsInt();
-                                packet.data[5] = (byte) 1;
-                                packet.dlc = 6;
-                                packets.add(packet);
-                            });
-                        }
-                    });
+                    if (state.getKey().equals(json.get("newState").getAsString())) {
+                        state.getValue().getAsJsonObject().entrySet().forEach(address -> {
+                            CanDataPacket packet = new CanDataPacket();
+                            packet.hash = hash;
+                            packet.command = 0x0b;
+                            packet.setUid(Integer.parseInt(address.getKey()));
+                            packet.data[4] = (byte) address.getValue().getAsInt();
+                            packet.data[5] = (byte) 1;
+                            packet.dlc = 6;
+                            packets.add(packet);
+                        });
+                    }
+                });
                 case "LOK" -> {
                     CanDataPacket packet = new CanDataPacket();
                     packet.hash = hash;
@@ -187,17 +234,17 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                 send(packet.toBytes());
             });
         }
-        synchronized public boolean incomingMessage(CanDataPacket incoming) {
-            packets.removeIf(incoming::isResponseTo);
-            if (response != null) {
-                response.activate();
-            }
+        public boolean isDone() {
             return packets.isEmpty();
         }
-
-
+        synchronized public boolean incomingMessage(CanDataPacket incoming) {
+            boolean wasUsed = packets.removeIf(incoming::isResponseTo);
+            if (packets.isEmpty() && response != null) {
+                response.activate();
+            }
+            return wasUsed;
+        }
     }
-
     private static class CanDataPacket {
         private byte prio;
         private byte command;
@@ -236,6 +283,21 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
                 canDataPacket.getUid() == this.getUid() &&
                 canDataPacket.command == this.command &&
                 canDataPacket.dlc == this.dlc;
+        }
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof CanDataPacket in)) {
+                return false;
+            }
+            boolean ret = prio == in.prio && dlc == in.dlc && response == in.response
+                    && command == in.command && hash == in.hash;
+            for (int i = 0; i < data.length; i++) {
+                if (data[i] != in.data[i]) {
+                    ret = false;
+                    break;
+                }
+            }
+            return ret;
         }
         @Override
         public String toString() {

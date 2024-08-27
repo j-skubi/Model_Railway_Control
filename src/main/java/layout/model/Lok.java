@@ -74,6 +74,17 @@ public class Lok extends LayoutComponent {
         return json;
     }
     @Override
+    public boolean hasAddress(String addressSpace, int address) {
+        return addressSpaceMappings.get(addressSpace).getAsInt() == address;
+    }
+    @Override
+    public void applyStandaloneMessage(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
+        switch (json.get("command").getAsString()) {
+            case "setTrainSpeed", "setTrainDirection","activateLokFunction" ->
+                notifyChange(json,queue);
+        }
+    }
+    @Override
     public void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue) {
         switch (command.get("command").getAsString()) {
             case "setTrainSpeed" -> {
@@ -94,6 +105,7 @@ public class Lok extends LayoutComponent {
             }
             case "activateLokFunction" -> {
                 lokFunctions.get(command.get("index").getAsInt()).isActive = (command.get("value").getAsInt() == 1);
+                //TODO notify Listeners
             }
         }
     }
