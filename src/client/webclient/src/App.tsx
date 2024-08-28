@@ -8,9 +8,8 @@ import LoadingSpinner from './MenuComponents/LoadingSpinner';
 import store from './Redux/store';
 import MenuBar from './MenuComponents/MenuBar';
 import { connectionStatus } from './definitions/types';
-import TurnoutList from './componentView/TurnoutList';
 import { selectVisibleViewType } from './Redux/dataSelectors';
-import LokComponentList from './componentView/LokView';
+import ComponentContainer from './componentView/componentContainer';
 
 
 connect()
@@ -20,7 +19,11 @@ function Application() {
   const viewType: string | undefined = useSelector(selectVisibleViewType);
   var view = <></>;
   switch(viewType) {
-    case "COMPONENT-VIEW": {view = <div><TurnoutList></TurnoutList><LokComponentList></LokComponentList></div>;break;}
+    case "COMPONENT-VIEW": {view = 
+    <div>
+      <ComponentContainer></ComponentContainer>
+    </div>;
+    break;}
     case undefined: {view = <></>}
   }
 
@@ -39,10 +42,6 @@ function Application() {
     )
   }
 }
-
-
-
-
 
 function App() {
   console.log("render");

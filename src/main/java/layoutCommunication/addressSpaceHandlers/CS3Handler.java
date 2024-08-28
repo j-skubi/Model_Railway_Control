@@ -83,22 +83,27 @@ public class CS3Handler extends AddressSpaceHandler implements Runnable {
             body.addProperty("address", incoming.getUid());
             switch (incoming.command) {
                 case 0x0b -> {
+                    body.addProperty("type","MA");
                     body.addProperty("state", incoming.data[4]);
                     body.addProperty("power", incoming.data[5]);
                 }
                 case 0x11 -> {
+                    body.addProperty("type","SENSOR");
                     body.addProperty("oldState", incoming.data[4]);
                     body.addProperty("newState", incoming.data[5]);
                 }
                 case 0x04 -> {
+                    body.addProperty("type","LOK");
                     body.addProperty("command", "setTrainSpeed");
                     body.addProperty("speed", ((incoming.data[4] & 0xff) << 8) | (incoming.data[5] & 0xff));
                 }
                 case 0x05 -> {
+                    body.addProperty("type","LOK");
                     body.addProperty("command", "setTrainDirection");
                     body.addProperty("direction", incoming.data[4] == 1 ? "FORWARD": "BACKWARDS");
                 }
                 case 0x06 -> {
+                    body.addProperty("type","LOK");
                     body.addProperty("command", "activateLokFunction");
                     body.addProperty("index", incoming.data[4]);
                     body.addProperty("value", incoming.data[5]);

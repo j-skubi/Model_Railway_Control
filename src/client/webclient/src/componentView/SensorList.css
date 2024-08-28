@@ -1,0 +1,52 @@
+.sensor-table {
+    border-collapse: collapse;
+    margin: 20px 0; /* Add some margin around the table */
+    min-width: 300px; /* Set a minimum width for the table */
+    min-height: 100px; /* Set a minimum height for the table */
+    width: auto; /* Allow the table to adjust its width based on content */
+    background-color: #333; /* Dark background to match the MenuBar */
+    color: white; /* White text to match the MenuBar */
+    border-radius: 8px; /* Round the corners of the table */
+    overflow: hidden; /* Ensure the rounded corners are visible */
+}
+
+.sensor-table th,
+.sensor-table td {
+    padding: 12px 15px;
+    border: 1px solid #444; /* Match the border to the theme */
+    text-align: left;
+    font-size: 16px;
+}
+
+.sensor-table th {
+    background-color: #555; /* Slightly lighter background for headers */
+    color: white; /* White text for headers */
+    text-transform: uppercase;
+}
+
+.sensor-row {
+    background-color: #333; /* Dark background color */
+    transition: background-color 0.3s ease;
+}
+
+.sensor-row.blink {
+    background-color: #4CAF50; /* Green color for blinking */
+    animation: blink-animation 1s forwards; /* Blink animation */
+}
+
+@keyframes blink-animation {
+    0% {
+        background-color: #4CAF50;
+    }
+    100% {
+        background-color: #333; /* Return to dark background after blink */
+    }
+}
+
+.sensor-name {
+    font-weight: bold;
+}
+
+.sensor-status {
+    color: #ccc; /* Light grey text for status */
+}

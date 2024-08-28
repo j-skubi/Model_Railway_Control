@@ -74,8 +74,11 @@ public class Lok extends LayoutComponent {
         return json;
     }
     @Override
-    public boolean hasAddress(String addressSpace, int address) {
-        return addressSpaceMappings.get(addressSpace).getAsInt() == address;
+    public boolean hasAddress(JsonObject command, int address) {
+        if (!command.get("type").getAsString().equals("LOK")) {
+            return false;
+        }
+        return addressSpaceMappings.get(command.get("addressSpace").getAsString()).getAsInt() == address;
     }
     @Override
     public void applyStandaloneMessage(JsonObject json, PriorityBlockingQueueWrapper<Command> queue) {
@@ -101,11 +104,15 @@ public class Lok extends LayoutComponent {
                 JsonObject additionalInfo = new JsonObject();
                 additionalInfo.addProperty("command", "setTrainDirection");
                 additionalInfo.addProperty("direction", direction.name());
-                notifyListeners(new Event(Event.EventType.LokStateChange, additionalInfo, queue));
+                notifyListeners(new Event(Event.EventType.LokStateChange, additionalInfo, queue,this));
             }
             case "activateLokFunction" -> {
                 lokFunctions.get(command.get("index").getAsInt()).isActive = (command.get("value").getAsInt() == 1);
-                //TODO notify Listeners
+                JsonObject additionalInfo = new JsonObject();
+                additionalInfo.addProperty("command", "activateLokFunction");
+                additionalInfo.addProperty("index", command.get("index").getAsInt());
+                additionalInfo.addProperty("isActive", (command.get("value").getAsInt() == 1));
+                notifyListeners(new Event(Event.EventType.LokStateChange, additionalInfo, queue,this));
             }
         }
     }
@@ -133,7 +140,7 @@ public class Lok extends LayoutComponent {
             JsonObject additionalInfo = new JsonObject();
             additionalInfo.addProperty("newSpeed", speed);
             additionalInfo.addProperty("command", "setTrainSpeed");
-            notifyListeners(new Event(Event.EventType.LokStateChange, additionalInfo, queue));
+            notifyListeners(new Event(Event.EventType.LokStateChange, additionalInfo, queue,this));
         }
         public void collect(int speed) {
             this.speed = speed;

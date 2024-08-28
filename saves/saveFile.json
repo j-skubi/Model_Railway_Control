@@ -36,11 +36,42 @@
             "modelID": 3,
             "name": "Freight-Train",
             "type": "LOK-VIEW"
+          },
+          {
+            "viewID": 4,
+            "modelID": 4,
+            "name": "Sensor Left",
+            "type": "SENSOR-VIEW"
           }
         ]
       }
     },
     "components": [
+      {
+        "id": 4,
+        "type": "SENSOR",
+        "addressSpaceMappings": {
+          "cs3": 65537
+        },
+        "isOccupied": false
+      },
+      {
+        "id": 3,
+        "type": "LOK",
+        "addressSpaceMappings": {
+          "cs3": 16392
+        },
+        "speed": 0,
+        "direction": "FORWARD",
+        "lokFunctions": [
+          {
+            "index": 0,
+            "isToggle": true,
+            "hasInputField": false,
+            "name": "Light"
+          }
+        ]
+      },
       {
         "id": 2,
         "type": "LOK",
@@ -81,19 +112,6 @@
             "name": "Horn-Short"
           }
         ]
-      },
-      {
-        "id": 3,
-        "type": "LOK",
-        "addressSpaceMappings": {
-          "cs3": {
-            "address": 16392
-          }
-      },
-        "speed": 0,
-        "direction": "FORWARD",
-        "lokFunctions": []
-
       },
       {
         "id": -2147483646,

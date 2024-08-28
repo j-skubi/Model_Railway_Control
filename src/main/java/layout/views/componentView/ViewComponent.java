@@ -8,8 +8,6 @@ import utils.datastructures.EventListener;
 
 public abstract class ViewComponent implements AVLTree.AVLDataElement, EventListener {
     private final ComponentView parent;
-
-
     protected final int viewID;
     protected final LayoutComponent model;
 
@@ -61,6 +59,7 @@ public abstract class ViewComponent implements AVLTree.AVLDataElement, EventList
         return switch (json.get("type").getAsString()) {
             case "TURNOUT-VIEW" -> new TurnoutView(parent,json,model.find(json.get("modelID").getAsInt()));
             case "LOK-VIEW" -> new LokView(parent,json,model.find(json.get("modelID").getAsInt()));
+            case "SENSOR-VIEW" -> new SensorView(parent,json,model.find(json.get("modelID").getAsInt()));
             default -> throw new CorruptedSaveFile("No corresponding view for type " + json.get("type").getAsString() + "!");
         };
     }

@@ -10,7 +10,6 @@ import utils.datastructures.PriorityBlockingQueueWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Turnout extends LayoutComponent  {
     private final List<String> legalStates;
@@ -59,8 +58,11 @@ public class Turnout extends LayoutComponent  {
         return json;
     }
     @Override
-    public boolean hasAddress(String addressSpace, int address) {
-        return addressSpaceMappings.get(addressSpace).getAsJsonObject().entrySet().stream()
+    public boolean hasAddress(JsonObject command, int address) {
+        if (!command.get("type").getAsString().equals("MA")) {
+            return false;
+        }
+        return addressSpaceMappings.get(command.get("addressSpace").getAsString()).getAsJsonObject().entrySet().stream()
                 .flatMap(stateMap -> stateMap.getValue().getAsJsonObject().keySet().stream())
                 .anyMatch(key -> Integer.parseInt(key) == address);
     }
@@ -98,7 +100,7 @@ public class Turnout extends LayoutComponent  {
             additionalInfo.addProperty("oldState", state);
             state = json.get("newState").getAsString();
             additionalInfo.addProperty("newState", state);
-            this.notifyListeners(new Event(Event.EventType.StateChange, additionalInfo, queue));
+            this.notifyListeners(new Event(Event.EventType.StateChange, additionalInfo, queue, this));
             System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Notified All Listeners");
         }
 

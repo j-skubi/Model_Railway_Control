@@ -7,33 +7,12 @@ import store from "../Redux/store";
 
 const Lok = (props: { component: lokComponent, key: number, index: number }) => {
     const [speedGoal, setSpeedGoal] = useState(0);
-    const [activeFunctions, setActiveFunctions] = useState<{ [key: number]: boolean }>({});
-
     const onSpeedGoalChange = (goal: number, viewID: number) => {
         setSpeedGoal(goal);
         store.dispatch({ type: 'setTrainSpeed', payload: { viewType: "COMPONENT-VIEW", viewID: viewID, speed: goal } });
     };
 
     const handleFunctionClick = (lokFunction: lokFunction) => {
-        const isActive = !!activeFunctions[lokFunction.index];
-        if (lokFunction.isToggle) {
-            setActiveFunctions({
-                ...activeFunctions,
-                [lokFunction.index]: !isActive,
-            });
-        } else {
-            setActiveFunctions({
-                ...activeFunctions,
-                [lokFunction.index]: true,
-            });
-            setTimeout(() => {
-                setActiveFunctions({
-                    ...activeFunctions,
-                    [lokFunction.index]: false,
-                });
-            }, 600); // Highlight for a short period
-        }
-
         store.dispatch({
             type: 'toggleLokFunction',
             payload: {
@@ -43,9 +22,8 @@ const Lok = (props: { component: lokComponent, key: number, index: number }) => 
             }
         });
     };
-
     return (
-        <div key={props.index} className="lok-container">
+        <div key={props.component.viewID} className="lok-container">
             <h2 className="lok-name">{props.component.name}</h2>
             <div className="lok-controls">
                 <div className="lok-direction" onClick={() => store.dispatch({ type: 'changeComponentState', payload: { viewType: "COMPONENT-VIEW", viewID: props.component.viewID } })}>
@@ -68,8 +46,7 @@ const Lok = (props: { component: lokComponent, key: number, index: number }) => 
                         .map(lokFunction => (
                             <button
                                 key={lokFunction.index}
-                                className={`lok-function-button ${activeFunctions[lokFunction.index] ? 'active' : ''}`}
-                                onClick={() => handleFunctionClick(lokFunction)}
+                                className={`lok-function-button ${lokFunction.isActive ? 'active' : ''}`} onClick={() => {handleFunctionClick(lokFunction); console.log(lokFunction.isActive)}}
                             >
                                 {lokFunction.name}
                             </button>
@@ -86,7 +63,7 @@ const LokList = () => {
     return (
         <div className="lok-list">
             {lokComponents.map((component, index) => (
-                <Lok component={component} key={index} index={index}></Lok>
+                <Lok component={component} key={component.viewID} index={index}></Lok>
             ))}
         </div>
     );

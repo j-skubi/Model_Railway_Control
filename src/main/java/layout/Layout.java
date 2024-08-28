@@ -86,8 +86,9 @@ public class Layout {
         }
         @Override
         public void run() {
+            System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Working on: " + command.toString());
             components.forEach(component -> {
-                if (component.hasAddress(command.get("addressSpace").getAsString(), command.get("address").getAsInt())) {
+                if (component.hasAddress(command, command.get("address").getAsInt())) {
                     component.applyStandaloneMessage(command, queue);
                 }
             });

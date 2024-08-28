@@ -1,6 +1,5 @@
 package layout.model;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import exceptions.CorruptedSaveFile;
 import utils.datastructures.AVLTree.AVLDataElement;
@@ -52,13 +51,14 @@ public abstract class LayoutComponent implements AVLDataElement {
     }
 
     public abstract void notifyChange(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
-    public abstract boolean hasAddress(String addressSpace, int address);
+    public abstract boolean hasAddress(JsonObject command, int address);
     public abstract void applyStandaloneMessage(JsonObject command, PriorityBlockingQueueWrapper<Command> queue);
 
     public static LayoutComponent fromJson(JsonObject json) throws CorruptedSaveFile {
         return switch (json.get("type").getAsString()) {
             case "TURNOUT" -> new Turnout(json);
             case "LOK" -> new Lok(json);
+            case "SENSOR" -> new Sensor(json);
             default -> throw new CorruptedSaveFile("Provided Json was not a legal LayoutComponent");
         };
     }

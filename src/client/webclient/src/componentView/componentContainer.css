@@ -1,0 +1,38 @@
+.component-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    grid-template-rows: auto auto; /* Adjust row height based on content */
+    grid-template-areas: 
+        "lok turnout"
+        "lok sensors"; /* Layout structure */
+    gap: 20px; /* Gap between grid items */
+    padding: 20px; /* Padding inside the container */
+    max-width: 100%; /* Ensure the container doesn't exceed the screen width */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    box-sizing: border-box; /* Ensure padding is included in the width/height */
+    background-color: #222; /* Background color for the container */
+    border-radius: 8px; /* Round the corners of the container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+.lok-wrapper,
+.turnout-wrapper,
+.sensor-wrapper {
+    background-color: #333; /* Match the theme */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.lok-wrapper {
+    grid-area: lok;
+}
+
+.turnout-wrapper {
+    grid-area: turnout;
+}
+
+.sensor-wrapper {
+    grid-area: sensors;
+}

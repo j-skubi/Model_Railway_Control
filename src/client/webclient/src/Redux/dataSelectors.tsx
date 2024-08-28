@@ -1,4 +1,4 @@
-import { lokComponent, state, turnoutComponent } from "../definitions/types";
+import { lokComponent, lokFunction, sensorComponent, state, turnoutComponent } from "../definitions/types";
 
 
 export function selectVisibleViewType(state: state) : string | undefined {
@@ -9,4 +9,7 @@ export function selectTurnoutComponents(state: state): turnoutComponent[] {
 }
 export function selectLokComponents(state: state): lokComponent[] {
     return state.data.viewData.lokData;
+}
+export function selectSensorComponents(state: state): sensorComponent[] {
+    return state.data.viewData.sensorData;
 }

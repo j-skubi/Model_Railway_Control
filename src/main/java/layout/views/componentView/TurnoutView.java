@@ -67,7 +67,7 @@ public class TurnoutView extends ViewComponent {
 
     @Override
     public void apply(Event event) {
-        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Notify TurnoutView");
+        System.out.format(Utils.getFormatString(), "[" + Thread.currentThread().getName() + "]", "[" + this.getClass().getSimpleName() + "]", "Notify SensorView");
         JsonObject header = new JsonObject();
         header.addProperty("from", "view");
         header.addProperty("to", "COMPONENT-VIEW");

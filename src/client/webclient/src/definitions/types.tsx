@@ -20,10 +20,18 @@ export type dataState = {
     viewData: {
         turnoutData: turnoutComponent[]
         lokData: lokComponent[]
+        sensorData: sensorComponent[]
     }
 }
 
-export type viewComponent = turnoutComponent | lokComponent
+export type viewComponent = turnoutComponent | lokComponent | sensorComponent
+
+export type sensorComponent = {
+    type: "SENSOR",
+    viewID: number,
+    name: string,
+    isOccupied: boolean
+}
 
 export type lokComponent = {
     type: "LOK"
